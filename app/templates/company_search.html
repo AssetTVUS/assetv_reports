@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-8 col-sm-4">
+           {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+
+
+
+  {% if results %}
+  <h2>Companies</h2>
+  <div class="table-responsive">
+     <table class="table table-hover table-striped" data-url="/edit/company/" id="table_data">
+       <thead>
+         <tr>
+           <th>Name</th>
+           <th>Month</th>
+           <th>Year</th>
+           <th>Type</th>
+         </tr>
+       </thead>
+       <tbody>
+         {% for row in results %}
+            <tr data-key="{{row.CID}}">
+              <td>{{row.CName}}</td>
+              <td>{{row.month_name}}
+              {%if  row.CReportSinceYear %}
+                <td>{{row.CReportSinceYear}}</td>
+                {% else %}
+              <td></td>
+                {% endif %}
+              <td>{{row.company_type}}
+            </tr>
+
+         {% endfor %}
+    </tbody>
+  </table>
+  <form method="post" action='' id="edit">
+    {{ form.hidden_tag() }}
+
+  </form>
+{%endif%}
+
+
+        <!-- /#page-content-wrapper -->
+
+    </div>
+
+
+{%- endblock %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{%- endblock %}

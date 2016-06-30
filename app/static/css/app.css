@@ -1,0 +1,81 @@
+
+/* make table highlight hovered row color:#eeeeee;*/
+.table-hover>tbody>tr:hover>td, .table-hover>tbody>tr:hover>th {
+  background-color: #0099FF;
+  color:white;
+
+}
+
+
+div#masterclass_header{
+   background-color: black; float:left;width:1333px;
+}
+
+div#masterclass_report_heading{ float:left; color:white; }
+
+div#masterclass_report_name{
+   font-family: 'PT Sans Narrow', sans-serif; font-size: 36px; padding-left:80px; 
+}
+
+div#masterclass_published_date,div#masterclass_report_date{
+   font-family: 'PT Sans Narrow', sans-serif; font-size: 20px; padding-left:80px;
+}
+div#masterclass_published_date,div#masterclass_report_date{
+   font-family: 'PT Sans Narrow', sans-serif; font-size: 20px; padding-left:80px;
+}
+div#master_class_header_logo{float:left;}
+
+
+div.master_class_row_1_cell { float:left;}
+div.master_class_row_1_cell img {height:100px; height:200px;}
+
+
+span#master_class_total_views,
+span#master_class_total_viewing_duration,
+span#master_class_video_duration,
+span#master_class_average_views {
+    font-family: 'PT Sans Narrow', sans-serif; font-size: 72px;padding-left:80px;
+}
+
+span#master_class_total_viewing_duration,
+span#master_class_average_views {
+    color: #0092DB;
+}
+
+div#master_class_row_2 {height:210px;}
+div.master_class_row_2_cell{float:left;}
+
+/*  override bootstrap row definition
+.row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+*/
+.row {
+    margin-left: 15px;
+
+
+}
+.glyphicon-stop {color:#1183D1;}
+/*
+   Audience Profile
+*/
+
+
+div#piechart-container{
+   width:270px;height:210px;
+}
+
+/*
+   Top Viewing Companies on Masterclass Report
+*/
+div#top_companies {width:270px; padding-left:10px;}
+/* add some space in list between numbers */
+li span.listspace{ padding-left:10px; }
+
+/* move heading to right */
+div#top_companies h4 {padding-left:15px;float:left;}
+
+
+div.barchart{width:370px;height:210px; }
+div.masterclass_report_subheader {width:370px;height:20px;padding-bottom:10px; }

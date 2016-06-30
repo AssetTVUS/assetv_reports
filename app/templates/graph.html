@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+
+        <!-- /#page-content-wrapper -->
+
+    <div id="masterclass">
+        <div id="masterclass_header" class="row">
+             <div id="masterclass_report_heading">
+                 <div id="masterclass_report_name">
+                     {{header.report_name}}
+                 </div>
+                 <div id="masterclass_published_date">
+                      {{header.published_date}}
+                 </div>
+                 <div id="masterclass_report_date">
+                      {{header.report_date}}
+                 </div>
+             </div>
+             <div id="master_class_header_logo" class="pull-right" >
+                 <img src="{{ url_for('static', filename='image/masterclass_header_logo.png') }}">
+             </div>
+        </div>
+
+
+        <div id="master_class_row_1" class="row">
+             <div class="master_class_row_1_cell">
+                 <img src="{{url}}" />
+             </div>
+
+            <div class="master_class_row_1_cell">
+                <div id="master_class_summary_block">
+                    <span id="master_class_total_views">{{summary['total_views']}}</span> total views
+                    <span id="master_class_total_viewing_duration">{{summary['total_viewing_duration']}}</span> total viewing duration (hours)
+                </div>
+                <div class="master_class_row_1_cell">
+                    <span id="master_class_video_duration">{{summary['video_duration']}}</span> video duration (min)
+                    <span id="master_class_average_views">{{summary['average_view']}}</span> average view (min)
+                </div>
+             </div>
+
+        </div>
+
+        <div id="master_class_row_2"  class="row">
+
+            <!--  AUDIENCE PROFILE -->
+
+            <div class="master_class_row_2_cell">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                <div class="masterclass_report_subheader">
+                   <h4>AUDIENCE PROFILE</h4>
+                </div>
+
+		        <div class="piechart-container" id="piechart-container">
+		        </div>
+            </div>
+
+            <!--  TOP VIEWING COMPANIES -->
+
+            <div class="master_class_row_2_cell">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                <div class="masterclass_report_subheader">
+                    <h4>TOP VIEWING COMPANIES</h4>
+                </div>
+                <div  id="top_companies">
+                    <ol>
+                        <li><span class='listspace'>Merril Lynch</span></li>
+                        <li><span class='listspace'>Morgan Stanly</span></li>
+                        <li><span class='listspace'>RBC</span></li>
+                        <li><span class='listspace'>Ameriprise</span></li>
+                        <li><span class='listspace'>LPL Financial</span></li>
+                        <li><span class='listspace'>MetLife</span></li>
+                        <li><span class='listspace'>Jannry</span></li>
+                        <li><span class='listspace'>Transamerica</span></li>
+                        <li><span class='listspace'>Stifel</span></li>
+                        <li><span class='listspace'>Commonwealth</span></li>
+                    </ol>
+                </div> <!-- end of top companies -->
+             </div>
+
+             <!--  TOP VIEWS TIMELINE -->
+
+            <div class="master_class_row_2_cell">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                <div class="masterclass_report_subheader">
+                    <h4>TOP VIEWS TIMELINE</h4>
+                </div>
+
+                <div class="barchart">
+                </div>
+            </div>
+
+        </div> <!-- end of master_class_row_2 -->
+    </div> <!-- end of masterclass -->
+    </div>
+
+
+{%- endblock %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{%- endblock %}

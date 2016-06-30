@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-8 col-sm-4">
+           {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+
+
+
+  {% if results %}
+
+  <h2>Videos</h2>
+  <div class="table-responsive">
+     <table class="table table-hover table-striped" data-url="/edit/video/" id="table_data">
+       <thead>
+         <tr>
+           <th>Title</th>
+           <th>Date Filmed</th>
+           <th>Date Published</th>
+           <th>Duration</th>
+         </tr>
+       </thead>
+       <tbody>
+         {% for row in results %}
+            <tr data-key="{{row.V_ID}}">
+              <td>{{row.V_Title}}</td>
+              <td>{{row.V_DateFilmed}}</td>
+              <td>{{row.V_DatePublished.strftime('%m/%d/%Y')}}</td>
+              <td>{{row.V_Duration| round(2,'common')}}</td>
+
+            </tr>
+
+         {% endfor %}
+    </tbody>
+  </table>
+  <form method="post" action='' id="edit">
+         {{ form.hidden_tag() }}
+
+  </form>
+{%endif%}
+
+
+        <!-- /#page-content-wrapper -->
+
+    </div>
+
+
+{%- endblock %}
+
+{% block navbar %}
+    {% include 'navbar.html' %}
+{%- endblock %}
