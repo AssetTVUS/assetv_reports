@@ -8,13 +8,13 @@
 
 
 div#masterclass_header{
-   background-color: black; float:left;width:1333px;
+   background-color: black; float:left;width:1333px;/* padding-top: 50px; */
 }
 
-div#masterclass_report_heading{ float:left; color:white; }
+div#masterclass_report_heading{ float:left; color:white; margin-top:50px; }
 
 div#masterclass_report_name{
-   font-family: 'PT Sans Narrow', sans-serif; font-size: 36px; padding-left:80px; 
+   font-family: 'PT Sans Narrow', sans-serif; font-size: 36px; padding-left:80px;
 }
 
 div#masterclass_published_date,div#masterclass_report_date{
@@ -23,26 +23,34 @@ div#masterclass_published_date,div#masterclass_report_date{
 div#masterclass_published_date,div#masterclass_report_date{
    font-family: 'PT Sans Narrow', sans-serif; font-size: 20px; padding-left:80px;
 }
+
+div#masterclass_report_date p{
+    width:240px;color: white; background-color: #0192DB;
+}
+
+
 div#master_class_header_logo{float:left;}
 
-
+div#master_class_row_1.row,div#master_class_row_2.row{margin-left:95px;}
 div.master_class_row_1_cell { float:left;}
-div.master_class_row_1_cell img {height:100px; height:200px;}
+div.master_class_row_1_cell img {width:400px; height:200px;}
 
+p#master_class_participants{font-size: 11px; color: red;width:400px;text-align: justify; }
 
-span#master_class_total_views,
-span#master_class_total_viewing_duration,
-span#master_class_video_duration,
-span#master_class_average_views {
-    font-family: 'PT Sans Narrow', sans-serif; font-size: 72px;padding-left:80px;
+td#master_class_total_views,
+td#master_class_total_viewing_duration,
+td#master_class_video_duration,
+td#master_class_average_views {
+    font-family: 'PT Sans Narrow', sans-serif; font-size: 72px;padding-left:80px; width:142px; text-align:right;
 }
 
-span#master_class_total_viewing_duration,
-span#master_class_average_views {
+td#master_class_total_viewing_duration,
+td#master_class_average_views {
     color: #0092DB;
 }
+td.table_label{font-size:14px; width:220px;padding-left:20px;}
 
-div#master_class_row_2 {height:210px;}
+div#master_class_row_2 {height:250px;}
 div.master_class_row_2_cell{float:left;}
 
 /*  override bootstrap row definition
@@ -77,5 +85,6 @@ li span.listspace{ padding-left:10px; }
 div#top_companies h4 {padding-left:15px;float:left;}
 
 
-div.barchart{width:370px;height:210px; }
-div.masterclass_report_subheader {width:370px;height:20px;padding-bottom:10px; }
+div.master_class_barchart{width:370px;height:220px; }
+
+div.masterclass_report_subheader h4 {width:370px;height:20px;padding-bottom: 25px;}

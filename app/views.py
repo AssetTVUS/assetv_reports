@@ -58,17 +58,19 @@ def get_company(key):
 @app.route('/graph', methods=['GET'])
 def graph():
     summary = dict()
-    summary['total_views'] = 2714
-    summary['total_viewing_duration'] = 836.6
-    summary['video_duration'] = 59.4
-    summary['average_view'] = 18.5
+    summary['total_views'] = '2,714'
+    summary['total_viewing_duration'] = '836.6'
+    summary['video_duration'] = '59.4'
+    summary['average_view'] = '18.5'
 
     url = 'https://www.assettv.com/sites/default/files/video/images/etfsfeb2016.jpg'
+    url_caption = ['AAAAAAAAAAAAAAAAAAAAAAAAA','AAAAAAAAAAAAAAAAAAAAAAAAA','AAAAAAAAAAAAAAAAAAAAAAAAA',
+                   'AAAAAAAAAAAAAAAAAAAAAAAAA','AAAAAAAAAAAAAAAAAAAAAAAAA']
 
     header = dict()
     header['report_name'] = 'EXCHANGE TRADED FUNDS'
-    header['published_date'] = 'December 7, 1941'
-    header['report_date'] = '6/1/2016'
+    header['published_date'] = 'PUBLISHED | December 7, 1941'
+    header['report_date'] = 'VIEWING REPORT | 6/1/2016'
 
 
-    return render_template('graph.html',summary=summary, url=url,header = header)
+    return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption)

@@ -16,7 +16,7 @@
                       {{header.published_date}}
                  </div>
                  <div id="masterclass_report_date">
-                      {{header.report_date}}
+                      <p>&nbsp;&nbsp;{{header.report_date}}</p>
                  </div>
              </div>
              <div id="master_class_header_logo" class="pull-right" >
@@ -28,19 +28,29 @@
         <div id="master_class_row_1" class="row">
              <div class="master_class_row_1_cell">
                  <img src="{{url}}" />
-             </div>
 
-            <div class="master_class_row_1_cell">
-                <div id="master_class_summary_block">
-                    <span id="master_class_total_views">{{summary['total_views']}}</span> total views
-                    <span id="master_class_total_viewing_duration">{{summary['total_viewing_duration']}}</span> total viewing duration (hours)
-                </div>
-                <div class="master_class_row_1_cell">
-                    <span id="master_class_video_duration">{{summary['video_duration']}}</span> video duration (min)
-                    <span id="master_class_average_views">{{summary['average_view']}}</span> average view (min)
-                </div>
+                <p id="master_class_participants">
+                     {% for caption in url_caption %}
+                         {{caption}}
+                     {% endfor %}
+                </p>
+            </div>
+             <div class="master_class_row_1_cell">
+                 <table  style="width:600px;">
+                     <tr>
+                         <td id="master_class_total_views">{{summary['total_views']}}</td>
+                         <td class="table_label">total<br>views</td>
+                         <td id="master_class_total_viewing_duration">{{summary['total_viewing_duration']}}</td>
+                         <td class="table_label">total viewing<br/>duration (hours)</td>
+                     </tr>
+                     <tr>
+                         <td id="master_class_video_duration">{{summary['video_duration']}}</td>
+                         <td class="table_label">video<br/>duration<br/>(min)</td>
+                         <td id="master_class_average_views">{{summary['average_view']}}</td>
+                         <td class="table_label">average view<br/>(min)</td>
+                     </tr>
+                 </table>
              </div>
-
         </div>
 
         <div id="master_class_row_2"  class="row">
@@ -88,7 +98,7 @@
                     <h4>TOP VIEWS TIMELINE</h4>
                 </div>
 
-                <div class="barchart">
+                <div class="master_class_barchart">
                 </div>
             </div>
 
