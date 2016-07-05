@@ -7,14 +7,6 @@
 		var data = [],
 			series = Math.floor(Math.random() * 6) + 3;
 
-        /*
-		for (var i = 0; i < series; i++) {
-			data[i] = {
-				label: "Series" + (i + 1),
-				data: Math.floor(Math.random() * 100) + 1
-			}
-		}
-        */
 
 
         data[0] = {data:32,label:"A"}

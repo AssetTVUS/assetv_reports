@@ -64,13 +64,50 @@ def graph():
     summary['average_view'] = '18.5'
 
     url = 'https://www.assettv.com/sites/default/files/video/images/etfsfeb2016.jpg'
-    url_caption = ['AAAAAAAAAAAAAAAAAAAAAAAAA','AAAAAAAAAAAAAAAAAAAAAAAAA','AAAAAAAAAAAAAAAAAAAAAAAAA',
-                   'AAAAAAAAAAAAAAAAAAAAAAAAA','AAAAAAAAAAAAAAAAAAAAAAAAA']
+    url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan']
+
+    url_video = 'https://www.assettv.com/video/masterclass-exchange-traded-funds-february-2016?chid=61'
+
 
     header = dict()
     header['report_name'] = 'EXCHANGE TRADED FUNDS'
     header['published_date'] = 'PUBLISHED | December 7, 1941'
     header['report_date'] = 'VIEWING REPORT | 6/1/2016'
+    header['masterclass'] = True
+    header['single'] = False
+    header['commpany_name'] = 'CAMBRIDE ASSOCIATES'
+
+    top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
+    'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')
+
+    return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
+                           top_companies = top_companies, url_video = url_video)
 
 
-    return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption)
+@app.route('/graph2', methods=['GET'])
+def graph2():
+    summary = dict()
+    summary['total_views'] = '1,295'
+    summary['total_viewing_duration'] = '32.4'
+    summary['video_duration'] = '2.2'
+    summary['average_view'] = '1.5'
+
+    url = 'https://www.assettv.com/sites/default/files/video/images/etfsfeb2016.jpg'
+    url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan']
+
+    url_video = 'https://www.assettv.com/video/masterclass-exchange-traded-funds-february-2016?chid=61'
+
+
+    header = dict()
+    header['report_name'] = 'EXCHANGE TRADED FUNDS'
+    header['published_date'] = 'PUBLISHED | December 7, 1941'
+    header['report_date'] = 'VIEWING REPORT | 6/1/2016'
+    header['masterclass'] = False
+    header['single'] = True
+    header['commpany_name'] = 'CAMBRIDE ASSOCIATES'
+
+    top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
+    'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')
+
+    return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
+                           top_companies = top_companies, url_video = url_video)

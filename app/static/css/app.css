@@ -8,7 +8,8 @@
 
 
 div#masterclass_header{
-   background-color: black; float:left;width:1333px;/* padding-top: 50px; */
+   background-color: black; float:left;width:1333px;
+    content:url(black_background.png);/* padding-top: 50px; */
 }
 
 div#masterclass_report_heading{ float:left; color:white; margin-top:50px; }
@@ -35,7 +36,7 @@ div#master_class_row_1.row,div#master_class_row_2.row{margin-left:95px;}
 div.master_class_row_1_cell { float:left;}
 div.master_class_row_1_cell img {width:400px; height:200px;}
 
-p#master_class_participants{font-size: 11px; color: red;width:400px;text-align: justify; }
+p#master_class_participants{font-size: 11px; color: red;width:400px; /* white-space: nowrap; */ }
 
 td#master_class_total_views,
 td#master_class_total_viewing_duration,
@@ -88,3 +89,40 @@ div#top_companies h4 {padding-left:15px;float:left;}
 div.master_class_barchart{width:370px;height:220px; }
 
 div.masterclass_report_subheader h4 {width:370px;height:20px;padding-bottom: 25px;}
+
+div#master_class_footer{padding-top:20px;}
+img#watch_on_tv {padding-left:100px;}
+img#logo_white {padding-left:220px;}
+/*
+* single reports css
+*/
+div#singleclass_report_name,div#singleclass_company_name,
+div#singleclass_published_date,div#singleclass_report_date {z-index:5}
+div#singleclass_report_name{
+position: relative; margin-top:-150px;}
+
+div#singleclass_header{padding-bottom:5px;}
+
+div#singleclass_report_name{
+   font-family: 'PT Sans Narrow', sans-serif; font-size: 36px; padding-left:80px; color:white;
+}
+div#singleclass_published_date,div#singleclass_report_date, div#singleclass_company_name{
+   font-family: 'PT Sans Narrow', sans-serif; font-size: 20px; padding-left:80px; color:white;
+}
+
+div#singleclass_report_date p{
+    width:240px;color: white; background-color: #0192DB ;z-index:5;
+}
+
+@media print {
+    div#masterclass_header {
+        background-color: black !important;
+        -webkit-print-color-adjust: exact;
+
+    }
+    div#sidebar-wrapper{display:none;}
+    div#singleclass{width:100%;margin-left: -90px;}
+    /*a{display:none;}*/
+    img#logo_white {padding-left:320px;}
+}
+
