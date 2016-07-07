@@ -5,6 +5,9 @@
   color:white;
 
 }
+h1 {
+  page-break-before: always;
+}
 
 /*     ----- MASTERCLASS REPORTS ------   */
 
@@ -126,11 +129,35 @@ div#channel_page1{
     background-image: url('../image/channel_page1.png');
     width:1000px;
     height:1000px;}
-   */
+
 div#channel_page1_title p {width: 320px; font-size: 31px; color:white; margin-top:-900px;z-index:0;}
 img#channel_page1_title_background{z-index:-1}
-div#channel_page1_company_name p {font-size:48px;}
-div#channel_page1_report_date p, div#channel_page1_stats_type p{font-size:31px;width:1000px;}
+*/
+div#channel_page1_details {margin:-620px 0 0 90px;}
+div#channel_page1_company_name p {font-size:48px; font-weight:bold; color:#109DEC;}
+div#channel_page1_report_date p, div#channel_page1_stats_type p{
+   font-size:31px;width:1000px;margin-top:50px;color:white;
+ }
+ /*  channel report page 1, bottom 3 cells */
+
+ div#channel_page1_cell1{position: relative; float:left;
+     width:230px; margin:110px 0 0 50px; z-index:2;}
+ div#channel_page1_cell1 p{
+    color:white;font-size:48px;padding:0 0 0 40px;
+ }
+
+ div#channel_page1_cell2{ position: relative; float:left;
+     width:230px; margin:110px 0 0 100px; z-index:2;}
+ div#channel_page1_cell2 p{
+    color:white;font-size:48px;padding:0 0 0 65px;
+ }
+
+ div#channel_page1_cell3{ position: relative; float:left;
+     width:230px; margin:110px 0 0 160px; z-index:2;
+  }
+ div#channel_page1_cell3 p{
+    color:white;font-size:48px;margin-left:65px;
+ }
 /*     ----- Print media queries------   */
 @media print {
     div#masterclass_header {
