@@ -111,3 +111,9 @@ def graph2():
 
     return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
                            top_companies = top_companies, url_video = url_video)
+
+@app.route('/graph3', methods=['GET'])
+def graph3():
+
+    # use J.P Morgan Asset Management
+    return render_template('channel.html')

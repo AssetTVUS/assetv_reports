@@ -6,6 +6,7 @@
 
 }
 
+/*     ----- MASTERCLASS REPORTS ------   */
 
 div#masterclass_header{
    background-color: black; float:left;width:1333px;
@@ -93,9 +94,9 @@ div.masterclass_report_subheader h4 {width:370px;height:20px;padding-bottom: 25p
 div#master_class_footer{padding-top:20px;}
 img#watch_on_tv {padding-left:100px;}
 img#logo_white {padding-left:220px;}
-/*
-* single reports css
-*/
+
+/*     ----- Single REPORTS ------   */
+
 div#singleclass_report_name,div#singleclass_company_name,
 div#singleclass_published_date,div#singleclass_report_date {z-index:5}
 div#singleclass_report_name{
@@ -113,7 +114,24 @@ div#singleclass_published_date,div#singleclass_report_date, div#singleclass_comp
 div#singleclass_report_date p{
     width:240px;color: white; background-color: #0192DB ;z-index:5;
 }
+/*     ----- Channel REPORTS ------   */
+ img#channel_page1_background{width: 1200px;height:2000px;z-index:-10;}
+ /*div#channel_page1_details p{ margin-top: -900px;z-index:8;} */
 
+/*
+div#channel_page1{
+    position: relative;
+    left: 0px;
+    top:  0px;
+    background-image: url('../image/channel_page1.png');
+    width:1000px;
+    height:1000px;}
+   */
+div#channel_page1_title p {width: 320px; font-size: 31px; color:white; margin-top:-900px;z-index:0;}
+img#channel_page1_title_background{z-index:-1}
+div#channel_page1_company_name p {font-size:48px;}
+div#channel_page1_report_date p, div#channel_page1_stats_type p{font-size:31px;width:1000px;}
+/*     ----- Print media queries------   */
 @media print {
     div#masterclass_header {
         background-color: black !important;

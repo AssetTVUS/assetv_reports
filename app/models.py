@@ -45,6 +45,19 @@ class Company_List(db.Model):
     def __repr__(self):
         return '<Company (%r) - %r>' % (self.CID, self.CName)
 
+class YTD_Results(db.Model):
+    __tablename__ = "VW_YTD_Results_Detailed"
+    CID = db.Column(db.Integer, primary_key=True)
+    V_ID = db.Column(db.Integer, primary_key=True)
+    V_Title = db.Column(db.String(200))
+    V_DatePublished = db.Column(db.String(20))
+    V_Duration = db.Column(db.Float)
+    View_Stats =  db.Column(db.Integer)
+    View_Completes = db.Column(db.Integer)
+    Average_Completion_Rate = db.Column(db.Float)
+    Average_Time = db.Column(db.Float)
+    Total_Time = db.Column(db.Float)
+    Bloomberg_Terminal_Views = db.Column(db.Integer)
 
 '''
 class TagList(db.Model):
