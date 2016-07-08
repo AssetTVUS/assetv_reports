@@ -166,8 +166,8 @@ div#channel_page1_report_date p, div#channel_page1_stats_type p{
 
     }
     div#sidebar-wrapper{display:none;}
-    div#singleclass{width:100%;margin-left: -90px;}
-    /*a{display:none;}*/
+    div#singleclass{width:auto;margin-left: -150px;}
+    a {display:none;}
     img#logo_white {padding-left:320px;}
 }
 

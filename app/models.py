@@ -59,6 +59,36 @@ class YTD_Results(db.Model):
     Total_Time = db.Column(db.Float)
     Bloomberg_Terminal_Views = db.Column(db.Integer)
 
+class Single_Report_View(db.Model):
+    __tablename__ = "VW_SINGLE_REPORT"
+    month_id =  db.Column(db.Integer)
+    V_ID  =  db.Column(db.Integer)
+    SPeriod = db.Column(db.String(20))
+    SYear = db.Column(db.Integer)
+    V_Title = db.Column(db.String(200))
+    V_ImageURL = db.Column(db.String(500))
+    V_VideoLink = db.Column(db.String(500))
+    V_DatePublished = db.Column(db.DateTime)
+    VType  = db.Column(db.String(20))
+    total_views = db.Column(db.Integer)
+    Wirehouse_Advisors = db.Column(db.Float)
+    Independent_BD = db.Column(db.Float)
+    RIA  = db.Column(db.Float)
+    Investment_Consultant =  db.Column(db.Float)
+    Plan_Sponsor =  db.Column(db.Float)
+    Asset_Manager =  db.Column(db.Float)
+    Other  =  db.Column(db.Float)
+    VS_ID = db.Column(db.Integer, primary_key=True)
+
+class Current_Month_Stats(db.Model):
+    __tablename__ = 'VW_Current_Month'
+    month_number =  db.Column(db.Integer, primary_key=True)
+    month_year =  db.Column(db.Integer)
+    month_id =  db.Column(db.Integer)
+    month_name  = db.Column(db.String(20))
+    month_short_name  = db.Column(db.String(3))
+
+
 '''
 class TagList(db.Model):
     TL_ID = db.Column(db.Integer, primary_key=True)
