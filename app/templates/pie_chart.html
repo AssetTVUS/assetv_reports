@@ -1,0 +1,24 @@
+<script language="javascript" type="text/javascript">
+
+      var placeholder = $("#piechart-container");
+      var audience_profile = {{audience_profile | safe}}
+      var piedata = []
+
+
+      {% for p in audience_profile %}
+          piedata[{{loop.index0}}] = {data:{{p[1]}},label:'{{p[0]}}'}
+      {% endfor %}
+
+       placeholder.unbind();
+
+       $.plot(placeholder, piedata, {
+	       series: {
+					pie: {
+				    show: true,
+				    combine: {color: "#999",threshold: 0.02}
+				    }
+		    },
+		    legend: {show: true, margin: [-75, 50]}
+		});
+
+</script>

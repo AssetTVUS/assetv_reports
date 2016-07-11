@@ -74,54 +74,87 @@ def get_single_report():
 #
 @app.route('/reports/single_report/<int:video_id>', methods=['POST'])
 def produce_single_report(video_id):
-    summary = dict()
+    summary = {}
 
     results = Single_Report_View.query.filter_by(V_ID = video_id).order_by(Single_Report_View.month_id).all()
+
+    # did we get reporting data? If not, complain
+    if not results:
+        return render_template('no_report_data.html')
 
     #get current month stats from database
     current_month_stats = Current_Month_Stats.query.all()
 
+    # unable to retrieve the current reportng month/year, show error page
     if not current_month_stats:
-        return render_template('error.html')
+        return render_template('error.html',error_message='Unable to retrieve the current reportng month/year, check database')
 
     current_month = current_month_stats[0].month_name
     current_year =  current_month_stats[0].month_year
+    current_month_number  = current_month_stats[0].month_number
+
+    # is this a single or masterclass video?
+    masterclass = True
+    single = False
+    if results[0].VType == 'SINGLE':
+        masterclass = False
+        single = True
 
     #loop through results set to find current month
+
+    audience_profile = [] # pie chart needs a list
 
     for result_row in results:
         if result_row.SPeriod == current_month and result_row.SYear == current_year :
 
             summary['total_views'] = result_row.total_views
-            summary['total_viewing_duration'] = 0.00
-            summary['video_duration'] = 0.0
-            summary['average_view'] = 0.0
+            summary['total_viewing_duration'] = 0.00  #TODO
+            summary['video_duration'] = 0.0           #TODO
+            summary['average_view'] = 0.0             #TODO
 
-    #summary['total_views'] = '1,295'
-    #summary['total_viewing_duration'] = '32.4'
-    #summary['video_duration'] = '2.2'
-    #summary['average_view'] = '1.5'
+            point=['Wirehouse Advisors' , result_row.Wirehouse_Advisors*100]
+            audience_profile.append(point)
 
-    url = 'https://www.assettv.com/sites/default/files/video/images/etfsfeb2016.jpg'
-    url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan']
+            point=['Independent B/D' ,result_row.Independent_BD*100 ]
+            audience_profile.append(point)
 
-    url_video = 'https://www.assettv.com/video/masterclass-exchange-traded-funds-february-2016?chid=61'
+            point = ['RIA' , result_row.RIA*10 ]
+            audience_profile.append(point)
+
+            point = ['Investment Consultant' , result_row.Investment_Consultant*100 ]
+            audience_profile.append(point)
+
+            point = [ 'Plan Sponsor' , result_row.Plan_Sponsor*100 ]
+            audience_profile.append(point)
+
+            point = ['Asset Manager' , result_row.Asset_Manager*100 ]
+            audience_profile.append(point)
+
+            point = [ 'Other' ,result_row.Other*100 ]
+            audience_profile.append(point)
+
+            url = result_row.V_ImageURL
+            url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan'] #TODO
+
+            url_video = result_row.V_VideoLink
 
 
-    header = dict()
-    header['report_name'] = 'EXCHANGE TRADED FUNDS'
-    header['published_date'] = 'PUBLISHED | December 7, 1941'
-    header['report_date'] = 'VIEWING REPORT | 6/1/2016'
-    header['masterclass'] = False
-    header['single'] = True
-    header['commpany_name'] = 'CAMBRIDE ASSOCIATES'
+            header = {}
+            header['report_name'] = result_row.V_Title
+            header['published_date'] = 'PUBLISHED | ' +  result_row.V_DatePublished.strftime('%B %d,%Y')
+            header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
+            header['masterclass'] = masterclass
+            header['single'] = single
+            header['commpany_name'] = 'CAMBRIDE ASSOCIATES' #TODO
 
-    top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
-    'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')
+            top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
+                'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')  #TODO
 
-    return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
-                           top_companies = top_companies, url_video = url_video)
+            return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
+                top_companies = top_companies, url_video = url_video, audience_profile = audience_profile)
 
+    return render_template('error.html',
+                           error_message='data for the current reporting period, check database')
 @app.route('/graph', methods=['POST'])
 def graph():
     summary = dict()
