@@ -2,6 +2,7 @@ from flask import render_template, request, make_response
 from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
+from models import Video_Tag
 from forms import VideoByNameForm, VideoEditForm , CompanyByNameForm
 
 @app.route('/')
@@ -134,7 +135,16 @@ def produce_single_report(video_id):
             audience_profile.append(point)
 
             url = result_row.V_ImageURL
-            url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan'] #TODO
+
+            #get the video caption(s) from the database
+            caption_results = Video_Tag.query.filter_by(video_id = video_id ,tag_type='Companies')\
+                .order_by(Video_Tag.tag_name).all()
+            caption = ''
+            if caption_results:
+                for c in caption_results:
+                    caption = caption + c.tag_name  + ', '
+                caption = caption.rstrip(', ') # remove last comma
+
 
             url_video = result_row.V_VideoLink
 
@@ -150,7 +160,7 @@ def produce_single_report(video_id):
             top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
                 'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')  #TODO
 
-            return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
+            return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
                 top_companies = top_companies, url_video = url_video, audience_profile = audience_profile)
 
     return render_template('error.html',

@@ -10,7 +10,7 @@
         <div id="masterclass_header" class="row">
              <div id="masterclass_report_heading">
                  <div id="masterclass_report_name">
-                     {{header.report_name}}
+                     <p>{{header.report_name}}</p>
                  </div>
                  <div id="masterclass_published_date">
                       {{header.published_date}}
@@ -19,7 +19,7 @@
                       <p>&nbsp;&nbsp;{{header.report_date}}</p>
                  </div>
              </div>
-             <div id="master_class_header_logo" class="pull-right" >
+             <div id="master_class_header_logo"  >
                  <img src="{{ url_for('static', filename='image/masterclass_header_logo.png') }}">
              </div>
         </div>
@@ -55,9 +55,7 @@
                 <img src="{{url}}" />
 
                 <p id="master_class_participants">
-                     {% for caption in url_caption %}
-                         {{caption}}
-                     {% endfor %}
+                        {{caption}}
                 </p>
 
 

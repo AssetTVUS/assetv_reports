@@ -15,7 +15,16 @@
 	       series: {
 					pie: {
 				    show: true,
-				    combine: {color: "#999",threshold: 0.02}
+				     innerRadius: 0.5,
+				    combine: {color: "#999",threshold: 0.02},
+				       label :{
+				        show:true,
+				                  formatter: function (label, series) {
+                                    return '<div style="border:0px solid grey;font-size:8pt;text-align:center;padding:5px;color:black;">' +
+                                        Math.round(series.percent) + '%</div>';
+                                   }
+
+				       }
 				    }
 		    },
 		    legend: {show: true, margin: [-75, 50]}

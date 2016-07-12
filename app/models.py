@@ -88,6 +88,13 @@ class Current_Month_Stats(db.Model):
     month_name  = db.Column(db.String(20))
     month_short_name  = db.Column(db.String(3))
 
+class Video_Tag(db.Model):
+    __tablename__ = 'VW_VIDEO_TAG_COMPANIES'
+    TL_ID = db.Column(db.Integer,primary_key = True)
+    video_id = db.Column(db.Integer)
+    tag_name = db.Column(db.String(200))
+    tag_type = db.Column(db.String(20))
+
 
 '''
 class TagList(db.Model):
