@@ -1,8 +1,9 @@
 from flask import render_template, request, make_response
+from sqlalchemy import desc
 from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
-from models import Video_Tag
+from models import Video_Tag, TopCompany, ReportMonth, CurrentMonth,VideoTopCompany
 from forms import VideoByNameForm, VideoEditForm , CompanyByNameForm
 
 @app.route('/')
@@ -145,23 +146,72 @@ def produce_single_report(video_id):
                     caption = caption + c.tag_name  + ', '
                 caption = caption.rstrip(', ') # remove last comma
 
-
+            # URL for video link
             url_video = result_row.V_VideoLink
 
 
             header = {}
-            header['report_name'] = result_row.V_Title
+
             header['published_date'] = 'PUBLISHED | ' +  result_row.V_DatePublished.strftime('%B %d,%Y')
             header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
             header['masterclass'] = masterclass
             header['single'] = single
-            header['commpany_name'] = 'CAMBRIDE ASSOCIATES' #TODO
 
-            top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
-                'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')  #TODO
+
+
+            if masterclass:
+                temp = result_row.V_Title.strip('MASTERCLASS:')
+                dash = temp.find('-',1) -1 #back up 1 position in fron of dash
+                header['report_name'] =  temp[1: dash]
+            else:
+                header['report_name'] = result_row.V_Title
+
+            if single:
+                header['commpany_name'] = 'CAMBRIDE ASSOCIATES' #TODO
+
+
+            #op_companies_result = TopCompanyVideo.query.join(ReportMonth,(ReportMonth.month_name == TopCompanyVideo.TCPeriod,
+            #                                            ReportMonth.month_year == TopCompanyVideo.TCYear))\
+            #                      .filter(CurrentMonth,(CurrentMonth.month_number == ReportMonth.month_number,
+            #                                          CurrentMonth.month_year == ReportMonth.month_year))\
+            #                      .filter(TopCompanyVideo == video_id).order_by(desc(TopCompanyVideo.TCViews)).limit(10)
+
+            #top_companies_result = VideoTopCompany.query.filter(VideoTopCompany.VTCVID== video_id)\
+            #    .filter(VideoTopCompany.VTCVID == video_id) \
+            #   .join(ReportMonth, (ReportMonth.month_name == VideoTopCompany.VTCPeriod,\
+            #            ReportMonth.month_year == VideoTopCompany.VTCYear))\
+            #    .order_by(desc(VideoTopCompany.VTCViews)).limit(10)
+
+            #top_companies = []
+            #top_companies_result = VideoTopCompany.query.filter(VideoTopCompany.VTCVID== video_id)\
+            #   .join(ReportMonth)\
+            #   .order_by(desc(VideoTopCompany.VTCViews)).limit(10)
+
+            #for tc in  top_companies_result:
+            #    top_companies.append(tc.VTCCompany)
+
+            top_companies = ('Merril Lynch', 'Morgan Stanly', 'RBC', 'Ameriprise',
+                             'LPL Financial', 'MetLife', 'Jannry', 'Transamerica', 'Stifel', 'Commonwealth')  # TODO
+
+            barchart_data = [
+                [0, 1885], # 1 - Mar
+                [1, 2479],# 1 - Apr
+                [2, 2637], # 1 - May
+                [3, 2714], # 1 - June
+                [4, 0], # 1 - Jul
+                [5, 0] #1 - Aug
+            ]
+
+            barchart_ticks = [
+                [0, "1-Mar"], [1, "1-Apr"], [2, "1-May"], [3, "1-Jun"],
+                [4, "1-Jul"], [5, "1-Aug"]
+            ]
+
+
 
             return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
-                top_companies = top_companies, url_video = url_video, audience_profile = audience_profile)
+                top_companies = top_companies, url_video = url_video, audience_profile = audience_profile,
+                barchart_data  = barchart_data ,barchart_ticks = barchart_ticks)
 
     return render_template('error.html',
                            error_message='data for the current reporting period, check database')

@@ -95,6 +95,62 @@ class Video_Tag(db.Model):
     tag_name = db.Column(db.String(200))
     tag_type = db.Column(db.String(20))
 
+class CurrentMonth(db.Model):
+    __tablename__ = 'current_month'
+    month_key = db.Column(db.Integer, primary_key = True)
+    month_number = db.Column(db.Integer)
+    month_year = db.Column(db.Integer)
+
+class ReportMonth(db.Model):
+    __tablename__='report_month'
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['month_number', 'month_year'],
+            ['CurrentMonth.month_number', 'CurrentMonth.month_year'],
+        ),
+    )
+    month_id = db.Column(db.Integer, primary_key = True)
+    month_short_name = db.Column(db.String(3))
+    month_name = db.Column(db.String(20))
+    month_number = db.Column(db.Integer,db.ForeignKey('CurrentMonth.month_number'))
+    month_year = db.Column(db.Integer,db.ForeignKey('CurrentMonth.month_year'))
+    #cm = db.relationship('CurrentMonth', lazy='joined',
+    #     primaryjoin='ReportMonth.month_number==CurrentMonth.month_number & ReportMonth.month_year==CurrentMonth.month_year')
+
+class TopCompany(db.Model):
+    __tablename__ = 'TopCompany'
+    TCID = db.Column(db.Integer, primary_key = True)
+    TCCID = db.Column(db.Integer)
+    TCPeriod = db.Column(db.String(255),db.ForeignKey('CurrentMonth.month_name'))
+    TCYear  = db.Column(db.Integer,db.ForeignKey('CurrentMonth.month_year'))
+    TCArea  = db.Column(db.String(255))
+    TCCompany = db.Column(db.String(255))
+    TCViews = db.Column(db.Integer)
+    #report_month = db.relationship('ReportMonth', lazy= 'joined')
+
+
+class VideoTopCompany(db.Model):
+    __tablename__ = 'VideoTopCompany'
+
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['VTCPeriod', 'VTCYear'],
+            ['ReportMonth.month_name', 'ReportMonth.month_year'],
+        ),
+    )
+    VTCID = db.Column(db.Integer, primary_key = True)
+    VTCVID = db.Column(db.Integer)
+    VTCPeriod = db.Column(db.String(255),db.ForeignKey('ReportMonth.month_name'))
+    VTCYear  = db.Column(db.Integer,db.ForeignKey('ReportMonth.month_year'))
+    VTCArea  = db.Column(db.String(255))
+    VTCCompany = db.Column(db.String(255))
+    VTCViews = db.Column(db.Integer)
+    #report_month = db.relationship('ReportMonth', lazy='joined',
+    #                                primaryjoin='report_month.month_name==VideoTopCompany.VTCPeriod')
+    #report_year =  db.relationship('ReportMonth', lazy='joined', primaryjoin='report_month.month_year==VideoTopCompany.VTCYear')
+
+
+
 
 '''
 class TagList(db.Model):
