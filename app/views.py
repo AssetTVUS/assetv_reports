@@ -215,6 +215,8 @@ def produce_single_report(video_id):
 
     return render_template('error.html',
                            error_message='data for the current reporting period, check database')
+
+
 @app.route('/graph', methods=['POST'])
 def graph():
     summary = dict()
@@ -273,7 +275,33 @@ def graph2():
                            top_companies = top_companies, url_video = url_video)
 
 @app.route('/graph3', methods=['GET'])
+
 def graph3():
+    body = {}
+    footer = {}
+
+    body['most_watched_video'] = "https://www.assettv.com/sites/default/files/video/images/importanceofsavingfor.jpg"
+    body['most_watched_video_title'] = "The  importance of saving for retirement"
+    body['most_watched_video_views'] = '2937'
+    body['most_watched_video_hours'] = 73
+
+
+    body['total_views'] = 21114
+    body['second_most_watched_video'] = 'https://www.assettv.com/sites/default/files/video/images/helpingmillennialswith.jpg'
+    body['second_most_watched_video_title'] = 'Helping millennials with innovative DC plan design'
+    body['second_most_watched_video_views'] =  2896
+    body['second_most_watched_video_hours'] = 109
+    body['total_time_hours'] = 2340
+    body['top_companies'] = ['Merrill Lynch Wealth Management','Morgan Stanley Wealth Management','LPL Financial',
+                             'Wells Fargo Advisors','Raymond James','RBC','Lincoln Financial Group',
+                             'UBS','Mercer','Commonwealth Fiancial']
+    body['average_time_minutes'] = 6.7
+    body['new_videos_published'] = 9
+    body['average_video_engagement'] = .7
+    footer['month_name'] = 'FEBRUARY 2016'
+    footer['month_views'] = 5548
+    footer['hours_watched'] = 778
 
     # use J.P Morgan Asset Management
-    return render_template('channel.html')
+    #return render_template('channel.html')
+    return render_template('channel_report_page_2.html',body = body, footer = footer)

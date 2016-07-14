@@ -1,0 +1,111 @@
+/* for channel reports only */
+
+h1 {
+  page-break-before: always;
+}
+
+
+.row {
+    margin-left: 15px;
+}
+.glyphicon-stop {color:#1183D1;}
+img#watch_on_tv {padding-left:100px;}
+img#logo_white {padding-left:220px;}
+
+
+/*     ----- Channel REPORTS ------   */
+ img#channel_page1_background{width: 1200px;z-index:-10;}
+ /*div#channel_page1_details p{ margin-top: -900px;z-index:8;} */
+
+div#channel_page1_details {margin:-520px 0 0 90px;}
+div#channel_page1_company_name p {font-size:48px; font-weight:bold; color:#109DEC;}
+div#channel_page1_report_date p, div#channel_page1_stats_type p{
+   font-size:31px;width:1000px;margin-top:50px;color:white;
+ }
+ /*  channel report page 1, bottom 3 cells */
+
+ div#channel_page1_cell1{position: relative; float:left;
+     width:230px; margin:50px 0 0 50px; z-index:2;}
+ div#channel_page1_cell1 p{
+    color:white;font-size:48px;padding:0 0 0 40px;
+ }
+
+ div#channel_page1_cell2{ position: relative; float:left;
+     width:230px; margin:50px 0 0 100px; z-index:2;}
+ div#channel_page1_cell2 p{
+    color:white;font-size:48px;padding:0 0 0 65px;
+ }
+
+ div#channel_page1_cell3{ position: relative; float:left;
+     width:230px; margin:50px 0 0 160px; z-index:2;
+  }
+ div#channel_page1_cell3 p{
+    color:white;font-size:48px;margin-left:65px;
+ }
+
+div#channel_report_page_2_row1_cell_1,
+div#channel_report_page_2_row1_cell_2,
+div#channel_report_page_2_row1_cell_3,
+div#channel_report_page_2_row2_cell_1,
+div#channel_report_page_2_row2_cell_2,
+div#channel_report_page_2_row2_cell_3,
+div#channel_report_page_2_row3_cell_1,
+div#channel_report_page_2_row3_cell_2,
+div#channel_report_page_2_row3_cell_2a,
+div#channel_report_page_2_row3_cell_2b{float:left;}
+
+
+
+div#channel_report_page_2_row1_cell_1,
+div#channel_report_page_2_row2_cell_1{width:500px;height: 170px;}
+div#channel_report_page_2_row1_cell_2,
+div#channel_report_page_2_row2_cell_2 {width:200px;}
+
+
+div.channel_report_page2_thumbnail img {width:50%;height:50%;float:left;}
+div.channel_report_page2_thumbnail_stats{float:left;width:200px;}
+div#channel_report_page_2_row1_cell_2 img,
+div#channel_report_page_2_row2_cell_2 img,
+div#channel_report_page_2_row3_cell_2 img,
+div#channel_report_page_2_row3_cell_2c img{width:50%;height:50%;float:left;}
+
+div#channel_report_page_2_row3_cell_1 {
+    height: 300px;
+    width: 500px;
+}
+
+div#channel_report_page_2_row3_cell_1{height:500px;}
+
+div#channel_report_page_2_row3,
+div#channel_report_page_2_row3_cell_2,
+div#channel_report_page_2_row3_cell_2a,
+div#channel_report_page_2_row3_cell_2b,
+div#channel_report_page_2_row3_cell_2c,
+div#channel_report_page_2_row3_cell_2d{height:300px;}
+
+div#channel_report_page_2_row3_cell_2,
+div#channel_report_page_2_row3_cell_2a,
+div#channel_report_page_2_row3_cell_2b,
+/*div#channel_report_page_2_row3_cell_2c,*/
+div#channel_report_page_2_row3_cell_2d,
+div#channel_report_page_2_row3_cell_2e,
+div#channel_report_page_2_row3_cell_2f,
+div#channel_report_page_2_row4,
+div#channel_report_page_2_row4_cell_2a,
+div#channel_report_page_2_row4_cell_2b,
+div#channel_report_page_2_row4_cell_2c,
+div#channel_report_page_2_row4_cell_2d,
+div#channel_report_page_2_row4_cell_2e,
+div#channel_report_page_2_row4_cell_2f{float:left;}
+
+div#channel_report_page_2_row4_cell_2b{width:400px;}
+
+/*     ----- Print media queries------   */
+@media print {
+
+    div#sidebar-wrapper{display:none;width:0;}
+    div#channel{width:auto;margin:100px 0 0 -250px;}
+    a {display:none;}
+    channel_page2 {page-break-before: always;}
+}
+
