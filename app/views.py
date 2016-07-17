@@ -217,13 +217,13 @@ def produce_single_report(video_id):
                            error_message='data for the current reporting period, check database')
 
 
-@app.route('/graph', methods=['POST'])
+@app.route('/graph', methods=['GET'])
 def graph():
     summary = dict()
-    summary['total_views'] = '2,714'
-    summary['total_viewing_duration'] = '836.6'
-    summary['video_duration'] = '59.4'
-    summary['average_view'] = '18.5'
+    summary['total_views'] = 2714
+    summary['total_viewing_duration'] = 836.6
+    summary['video_duration'] = 59.4
+    summary['average_view'] = 18.5
 
     url = 'https://www.assettv.com/sites/default/files/video/images/etfsfeb2016.jpg'
     url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan']
@@ -242,8 +242,47 @@ def graph():
     top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
     'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')
 
+
+    barchart_data = [
+        [0, 1885], # 1 - Mar
+        [1, 2479],# 1 - Apr
+        [2, 2637], # 1 - May
+        [3, 2714], # 1 - June
+        [4, 0], # 1 - Jul
+        [5, 0] #1 - Aug
+    ]
+
+    barchart_ticks = [
+        [0, "1-Mar"], [1, "1-Apr"], [2, "1-May"], [3, "1-Jun"],
+        [4, "1-Jul"], [5, "1-Aug"]
+    ]
+    audience_profile = [] # pie chart needs a list
+
+    point=['Wirehouse Advisors' , 20]
+    audience_profile.append(point)
+
+    point=['Independent B/D' ,20]
+    audience_profile.append(point)
+
+    point = ['RIA' , 10 ]
+    audience_profile.append(point)
+
+    point = ['Investment Consultant' , 5 ]
+    audience_profile.append(point)
+
+    point = [ 'Plan Sponsor' , 5]
+    audience_profile.append(point)
+
+    point = ['Asset Manager' , 5 ]
+    audience_profile.append(point)
+
+    point = [ 'Other' ,35 ]
+    audience_profile.append(point)
+
     return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
-                           top_companies = top_companies, url_video = url_video)
+                top_companies = top_companies, url_video = url_video,
+                audience_profile = audience_profile,
+                barchart_data  = barchart_data ,barchart_ticks = barchart_ticks)
 
 
 @app.route('/graph2', methods=['GET'])

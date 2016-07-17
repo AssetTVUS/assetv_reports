@@ -50,7 +50,7 @@
      {% endif %}
 
         <div id="master_class_row_1" class="row">
-             <div class="master_class_row_1_cell">
+             <div class="master_class_row_1_cell col-md-4">
 
                 <img src="{{url}}" />
 
@@ -61,8 +61,8 @@
 
 
             </div>
-             <div class="master_class_row_1_cell">
-                 <table  style="width:600px;">
+              <div class="master_class_row_1_cell col-md-8">
+                    <table id="master_class_table" class="col-md-8">
                      <tr>
                          <td id="master_class_total_views">{{'{0:,}'.format(summary['total_views'])}}</td>
                          <td class="table_label">total<br>views</td>
@@ -83,7 +83,7 @@
 
             <!--  AUDIENCE PROFILE -->
 
-            <div class="master_class_row_2_cell">
+            <div class="master_class_row_2_cell col-md-5">
                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
                 <div class="masterclass_report_subheader">
 
@@ -100,7 +100,7 @@
 
             <!--  TOP VIEWING COMPANIES -->
 
-            <div class="master_class_row_2_cell">
+            <div class="master_class_row_2_cell col-md-3">
                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
                 <div class="masterclass_report_subheader">
                     <h4>TOP VIEWING COMPANIES</h4>
@@ -116,7 +116,7 @@
 
              <!--  TOP VIEWS TIMELINE -->
 
-            <div class="master_class_row_2_cell">
+            <div class="master_class_row_2_cell col-md-4">
                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
                 <div class="masterclass_report_subheader">
                     <h4>TOP VIEWS TIMELINE</h4>

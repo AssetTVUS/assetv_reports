@@ -35,12 +35,15 @@ div#masterclass_report_date p{
 
 div#master_class_header_logo{float:left;}
 
+/*
 div#master_class_row_1.row,div#master_class_row_2.row{margin-left:95px;}
+*/
 div.master_class_row_1_cell { float:left;}
 div.master_class_row_1_cell img {width:400px; height:200px;}
 
 p#master_class_participants{font-size: 11px; color: black;width:400px; /* white-space: nowrap; */ }
 
+table#master_class_table{margin-left:50px;}
 td#master_class_total_views,
 td#master_class_total_viewing_duration,
 td#master_class_video_duration,
