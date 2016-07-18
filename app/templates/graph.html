@@ -8,19 +8,17 @@
     {% if header.masterclass %}
     <div id="masterclass">
         <div id="masterclass_header" class="row">
+             <img src="{{ url_for('static', filename='image/masterclass_header_logo.png') }}">
              <div id="masterclass_report_heading">
                  <div id="masterclass_report_name">
                      <p>{{header.report_name}}</p>
                  </div>
                  <div id="masterclass_published_date">
-                      {{header.published_date}}
+                     <p>{{header.published_date}}</p>
                  </div>
                  <div id="masterclass_report_date">
                       <p>&nbsp;&nbsp;{{header.report_date}}</p>
                  </div>
-             </div>
-             <div id="master_class_header_logo" class="pull-right" >
-                 <img src="{{ url_for('static', filename='image/masterclass_header_logo.png') }}">
              </div>
         </div>
      {% endif %}
@@ -66,13 +64,14 @@
                      <tr>
                          <td id="master_class_total_views">{{'{0:,}'.format(summary['total_views'])}}</td>
                          <td class="table_label">total<br>views</td>
-                         <td id="master_class_total_viewing_duration">{{summary['total_viewing_duration']}}</td>
+                         <td id="master_class_total_viewing_duration">{{'%0.1f' % summary['total_viewing_duration']}}</td>
+
                          <td class="table_label">total viewing<br/>duration (hours)</td>
                      </tr>
                      <tr>
-                         <td id="master_class_video_duration">{{summary['video_duration']}}</td>
+                         <td id="master_class_video_duration">{{'%0.1f' % summary['video_duration']}}</td>
                          <td class="table_label">video<br/>duration<br/>(min)</td>
-                         <td id="master_class_average_views">{{summary['average_view']}}</td>
+                         <td id="master_class_average_views">{{'%0.1f' % summary['average_view']}}</td>
                          <td class="table_label">average view<br/>(min)</td>
                      </tr>
                  </table>

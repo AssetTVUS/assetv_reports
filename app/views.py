@@ -67,7 +67,8 @@ def get_single_report():
 
     if form.validate_on_submit():
         title = '%' + form.title.data + '%'
-        results = Video.query.filter(Video.V_Title.ilike(title.encode("utf-8"))).order_by(Video.V_Title).all()
+        results = Video.query.filter(Video.V_Title.ilike(title.encode("utf-8"))).filter(Video.V_Type != None)\
+            .order_by(Video.V_Title).all()
         for r in results:
             print r
     return render_template('single_report_search.html',results=results,form=form)
@@ -102,119 +103,178 @@ def produce_single_report(video_id):
         masterclass = False
         single = True
 
-    #loop through results set to find current month
 
-    audience_profile = [] # pie chart needs a list
+    #
+    # get the data for the bar chart
+    #
+    barchart_data = []
+    barchart_ticks = []
 
-    for result_row in results:
-        if result_row.SPeriod == current_month and result_row.SYear == current_year :
-
-            summary['total_views'] = result_row.total_views
-            summary['total_viewing_duration'] = 0.00  #TODO
-            summary['video_duration'] = 0.0           #TODO
-            summary['average_view'] = 0.0             #TODO
-
-            point=['Wirehouse Advisors' , result_row.Wirehouse_Advisors*100]
-            audience_profile.append(point)
-
-            point=['Independent B/D' ,result_row.Independent_BD*100 ]
-            audience_profile.append(point)
-
-            point = ['RIA' , result_row.RIA*10 ]
-            audience_profile.append(point)
-
-            point = ['Investment Consultant' , result_row.Investment_Consultant*100 ]
-            audience_profile.append(point)
-
-            point = [ 'Plan Sponsor' , result_row.Plan_Sponsor*100 ]
-            audience_profile.append(point)
-
-            point = ['Asset Manager' , result_row.Asset_Manager*100 ]
-            audience_profile.append(point)
-
-            point = [ 'Other' ,result_row.Other*100 ]
-            audience_profile.append(point)
-
-            url = result_row.V_ImageURL
-
-            #get the video caption(s) from the database
-            caption_results = Video_Tag.query.filter_by(video_id = video_id ,tag_type='Companies')\
-                .order_by(Video_Tag.tag_name).all()
-            caption = ''
-            if caption_results:
-                for c in caption_results:
-                    caption = caption + c.tag_name  + ', '
-                caption = caption.rstrip(', ') # remove last comma
-
-            # URL for video link
-            url_video = result_row.V_VideoLink
+    for index in range(len(results)):
+        # make ticks in the format of 1-JAN, 1-MAR
+        barchart_ticks.append([index,'1-' + results[index].month_short_name.encode("utf-8")])
+        barchart_data.append([index,results[index].total_views])
 
 
-            header = {}
+    # pie chart needs a list
+    audience_profile = []
 
-            header['published_date'] = 'PUBLISHED | ' +  result_row.V_DatePublished.strftime('%B %d,%Y')
-            header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
-            header['masterclass'] = masterclass
-            header['single'] = single
+    #dictionary for report header
+    header = {}
+
+    if single:
+
+        # loop through results set to find current month
+
+        for result_row in results:
+           if result_row.SPeriod == current_month and result_row.SYear == current_year :
+
+               summary['total_views'] = result_row.total_views
+               summary['total_viewing_duration'] = result_row.Total_Hours
+               summary['video_duration'] = result_row.V_Duration
+               summary['average_view'] = result_row.Avgerage_Minutes             #TODO
+
+               point=['Wirehouse Advisors' , result_row.Wirehouse_Advisors*100]
+               audience_profile.append(point)
+
+               point=['Independent B/D' ,result_row.Independent_BD*100 ]
+               audience_profile.append(point)
+
+               point = ['RIA' , result_row.RIA*10 ]
+               audience_profile.append(point)
+
+               point = ['Investment Consultant' , result_row.Investment_Consultant*100 ]
+               audience_profile.append(point)
+
+               point = [ 'Plan Sponsor' , result_row.Plan_Sponsor*100 ]
+               audience_profile.append(point)
+
+               point = ['Asset Manager' , result_row.Asset_Manager*100 ]
+               audience_profile.append(point)
+
+               point = [ 'Other' ,result_row.Other*100 ]
+               audience_profile.append(point)
 
 
+               # URL for Image and Video links
+               url_video = result_row.V_VideoLink
+               url = result_row.V_ImageURL
 
-            if masterclass:
-                temp = result_row.V_Title.strip('MASTERCLASS:')
-                dash = temp.find('-',1) -1 #back up 1 position in fron of dash
-                header['report_name'] =  temp[1: dash]
-            else:
-                header['report_name'] = result_row.V_Title
+               #get the video caption(s) and Company Name  from the database
+               caption_results = Video_Tag.query.filter_by(video_id = video_id )\
+                   .order_by(Video_Tag.tag_name).all()
 
-            if single:
-                header['commpany_name'] = 'CAMBRIDE ASSOCIATES' #TODO
+               caption = ''
+               if caption_results:
+                   for c in caption_results:
+                       if c.tag_type =='People':
+                           caption = caption + c.tag_name  + ', '
+                           caption = caption.rstrip(', ') # remove last comma
 
-
-            #op_companies_result = TopCompanyVideo.query.join(ReportMonth,(ReportMonth.month_name == TopCompanyVideo.TCPeriod,
-            #                                            ReportMonth.month_year == TopCompanyVideo.TCYear))\
-            #                      .filter(CurrentMonth,(CurrentMonth.month_number == ReportMonth.month_number,
-            #                                          CurrentMonth.month_year == ReportMonth.month_year))\
-            #                      .filter(TopCompanyVideo == video_id).order_by(desc(TopCompanyVideo.TCViews)).limit(10)
-
-            #top_companies_result = VideoTopCompany.query.filter(VideoTopCompany.VTCVID== video_id)\
-            #    .filter(VideoTopCompany.VTCVID == video_id) \
-            #   .join(ReportMonth, (ReportMonth.month_name == VideoTopCompany.VTCPeriod,\
-            #            ReportMonth.month_year == VideoTopCompany.VTCYear))\
-            #    .order_by(desc(VideoTopCompany.VTCViews)).limit(10)
-
-            #top_companies = []
-            #top_companies_result = VideoTopCompany.query.filter(VideoTopCompany.VTCVID== video_id)\
-            #   .join(ReportMonth)\
-            #   .order_by(desc(VideoTopCompany.VTCViews)).limit(10)
-
-            #for tc in  top_companies_result:
-            #    top_companies.append(tc.VTCCompany)
-
-            top_companies = ('Merril Lynch', 'Morgan Stanly', 'RBC', 'Ameriprise',
-                             'LPL Financial', 'MetLife', 'Jannry', 'Transamerica', 'Stifel', 'Commonwealth')  # TODO
-
-            barchart_data = [
-                [0, 1885], # 1 - Mar
-                [1, 2479],# 1 - Apr
-                [2, 2637], # 1 - May
-                [3, 2714], # 1 - June
-                [4, 0], # 1 - Jul
-                [5, 0] #1 - Aug
-            ]
-
-            barchart_ticks = [
-                [0, "1-Mar"], [1, "1-Apr"], [2, "1-May"], [3, "1-Jun"],
-                [4, "1-Jul"], [5, "1-Aug"]
-            ]
+                       if c.tag_type == 'Companies':
+                           header['commpany_name'] =  c.tag_name  # add Company Name to Header dict
 
 
 
-            return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
-                top_companies = top_companies, url_video = url_video, audience_profile = audience_profile,
-                barchart_data  = barchart_data ,barchart_ticks = barchart_ticks)
 
-    return render_template('error.html',
-                           error_message='data for the current reporting period, check database')
+
+
+               header['published_date'] = 'PUBLISHED | ' +  result_row.V_DatePublished.strftime('%B %d,%Y')
+               header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
+               header['masterclass'] = masterclass
+               header['single'] = single
+               header['report_name'] = result_row.V_Title
+
+
+               top_companies =[]
+               top_companies_result = TopCompany.query.filter_by(VTCVID = video_id).order_by(desc(TopCompany.VTCViews))
+
+               for tc in  top_companies_result:
+                   top_companies.append(tc.VTCCompany)
+
+               return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
+                   top_companies = top_companies, url_video = url_video, audience_profile = audience_profile,
+                   barchart_data  = barchart_data ,barchart_ticks = barchart_ticks)
+
+        return render_template('error.html',
+                error_message='data for the current reporting period, check database')
+
+
+    else:
+        point = {}
+        summary['total_views'] = 0
+        summary['total_viewing_duration'] = 0
+        summary['video_duration'] = 0
+        summary['average_view'] = 0
+
+        point['Wirehouse Advisors'] = 0
+        point['Independent B/D'] = 0
+        point['RIA'] = 0
+        point['Investment Consultant'] = 0
+        point['Plan Sponsor'] = 0
+        point['Asset Manager'] = 0
+        point['Other'] = 0
+
+        for result_row in results:
+            summary['total_views'] = summary['total_views'] + result_row.total_views
+            summary['total_viewing_duration'] = summary['total_viewing_duration'] + result_row.Total_Hours
+            ###summary['video_duration'] = summary['video_duration']  + result_row.V_Duration
+            summary['average_view'] = summary['average_view'] + result_row.Avgerage_Minutes  # TODO
+
+            point['Wirehouse Advisors'] =  point['Wirehouse Advisors']  +  (result_row.Wirehouse_Advisors * 100)
+            point['Independent B/D'] =  point['Independent B/D'] + ( result_row.Independent_BD * 100)
+            point['RIA'] = point['RIA'] + (result_row.RIA * 10)
+            point['Investment Consultant'] = point['Investment Consultant'] + (result_row.Investment_Consultant * 100)
+            point['Plan Sponsor'] =   point['Plan Sponsor'] + (result_row.Plan_Sponsor * 100)
+            point['Asset Manager'] = point['Asset Manager'] + (result_row.Asset_Manager * 100)
+            point ['Other'] =   point ['Other'] + (result_row.Other * 100)
+
+        audience_profile.append(point['Wirehouse Advisors'])
+        audience_profile.append(point['Independent B/D'])
+        audience_profile.append(point['RIA'])
+        audience_profile.append(point['Investment Consultant'])
+        audience_profile.append(point['Plan Sponsor'])
+        audience_profile.append(point['Asset Manager'])
+        audience_profile.append(point['Other'])
+
+        url_video = results[0].V_VideoLink
+        url = results[0].V_ImageURL
+        summary['video_duration'] = results[0].V_Duration
+
+        # get the video caption(s) and Company Name  from the database
+        caption_results = Video_Tag.query.filter_by(video_id=video_id) \
+            .order_by(Video_Tag.tag_name).all()
+
+        caption = ''
+        if caption_results:
+            for c in caption_results:
+                if c.tag_type == 'People':
+                    caption = caption + c.tag_name + ', '
+                    caption = caption.rstrip(', ')  # remove last comma
+
+                #if c.tag_type == 'Companies':
+                #    header['commpany_name'] = c.tag_name  # add Company Name to Header dict
+
+        header['published_date'] = 'PUBLISHED | ' + results[0].V_DatePublished.strftime('%B %d,%Y')
+        header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
+        header['masterclass'] = masterclass
+        header['single'] = single
+        header['report_name'] = results[0].V_Title
+
+        # chop MASTERCLASS TITLE
+        temp = results[0].V_Title.strip('MASTERCLASS:')
+        dash = temp.find('-', 1) - 1  # back up 1 position in fron of dash
+        header['report_name'] = temp[1: dash]
+
+        top_companies = []
+        top_companies_result = TopCompany.query.filter_by(VTCVID=video_id).order_by(desc(TopCompany.VTCViews))
+
+        for tc in top_companies_result:
+            top_companies.append(tc.VTCCompany)
+
+        return render_template('graph.html', summary=summary, url=url, header=header, caption=caption,
+                               top_companies=top_companies, url_video=url_video, audience_profile=audience_profile,
+                               barchart_data=barchart_data, barchart_ticks=barchart_ticks)
 
 
 @app.route('/graph', methods=['GET'])
@@ -288,10 +348,10 @@ def graph():
 @app.route('/graph2', methods=['GET'])
 def graph2():
     summary = dict()
-    summary['total_views'] = '1,295'
-    summary['total_viewing_duration'] = '32.4'
-    summary['video_duration'] = '2.2'
-    summary['average_view'] = '1.5'
+    summary['total_views'] = 1295
+    summary['total_viewing_duration'] = 32.4
+    summary['video_duration'] = 2.2
+    summary['average_view'] = 1.5
 
     url = 'https://www.assettv.com/sites/default/files/video/images/etfsfeb2016.jpg'
     url_caption = ['Charles Schwab, ', 'Morgan Stanley, ','Thornburg, ','New York Life, ','J.P. Morgan']
@@ -310,8 +370,45 @@ def graph2():
     top_companies = ('Merril Lynch','Morgan Stanly','RBC', 'Ameriprise',
     'LPL Financial', 'MetLife','Jannry', 'Transamerica','Stifel','Commonwealth')
 
+    audience_profile = [] # pie chart needs a list
+
+    point=['Wirehouse Advisors' , 27]
+    audience_profile.append(point)
+
+    point=['Independent B/D' ,26]
+    audience_profile.append(point)
+
+    point = ['RIA' , 14 ]
+    audience_profile.append(point)
+
+    point = ['Investment Consultant' , 5 ]
+    audience_profile.append(point)
+
+    point = [ 'Plan Sponsor' , 6]
+    audience_profile.append(point)
+
+    point = ['Asset Manager' , 5 ]
+    audience_profile.append(point)
+
+    point = [ 'Other' ,2 ]
+    audience_profile.append(point)
+    barchart_data = [
+        [0, 1885], # 1 - Mar
+        [1, 2479],# 1 - Apr
+        [2, 2637], # 1 - May
+        [3, 2714], # 1 - June
+        [4, 0], # 1 - Jul
+        [5, 0] #1 - Aug
+    ]
+
+    barchart_ticks = [
+        [0, "1-Mar"], [1, "1-Apr"], [2, "1-May"], [3, "1-Jun"],
+        [4, "1-Jul"], [5, "1-Aug"]
+    ]
     return render_template('graph.html',summary=summary, url=url,header = header, url_caption = url_caption,
-                           top_companies = top_companies, url_video = url_video)
+                           top_companies = top_companies, url_video = url_video,
+                           audience_profile=audience_profile,
+                           barchart_data=barchart_data, barchart_ticks=barchart_ticks)
 
 @app.route('/graph3', methods=['GET'])
 

@@ -65,12 +65,21 @@ class Single_Report_View(db.Model):
     V_ID  =  db.Column(db.Integer)
     SPeriod = db.Column(db.String(20))
     SYear = db.Column(db.Integer)
+    month_short_name = db.Column(db.String(3))
     V_Title = db.Column(db.String(200))
     V_ImageURL = db.Column(db.String(500))
     V_VideoLink = db.Column(db.String(500))
     V_DatePublished = db.Column(db.DateTime)
     VType  = db.Column(db.String(20))
     total_views = db.Column(db.Integer)
+
+
+    Completed_Views  = db.Column(db.Integer)
+    Avgerage_Minutes  = db.Column(db.Float)
+    Total_Hours  = db.Column(db.Float)
+    V_Duration  = db.Column(db.Float)
+
+
     Wirehouse_Advisors = db.Column(db.Float)
     Independent_BD = db.Column(db.Float)
     RIA  = db.Column(db.Float)
@@ -96,7 +105,7 @@ class Video_Tag(db.Model):
     tag_type = db.Column(db.String(20))
 
 class CurrentMonth(db.Model):
-    __tablename__ = 'current_month'
+    __tablename__ = 'Month_current'
     month_key = db.Column(db.Integer, primary_key = True)
     month_number = db.Column(db.Integer)
     month_year = db.Column(db.Integer)
@@ -118,15 +127,12 @@ class ReportMonth(db.Model):
     #     primaryjoin='ReportMonth.month_number==CurrentMonth.month_number & ReportMonth.month_year==CurrentMonth.month_year')
 
 class TopCompany(db.Model):
-    __tablename__ = 'TopCompany'
-    TCID = db.Column(db.Integer, primary_key = True)
-    TCCID = db.Column(db.Integer)
-    TCPeriod = db.Column(db.String(255),db.ForeignKey('CurrentMonth.month_name'))
-    TCYear  = db.Column(db.Integer,db.ForeignKey('CurrentMonth.month_year'))
-    TCArea  = db.Column(db.String(255))
-    TCCompany = db.Column(db.String(255))
-    TCViews = db.Column(db.Integer)
-    #report_month = db.relationship('ReportMonth', lazy= 'joined')
+    __tablename__ = 'VW_TOP_COMPANIES'
+    VTCID = db.Column(db.Integer, primary_key = True)
+    VTCVID = db.Column(db.Integer)
+    VTCCompany = db.Column(db.String(255))
+    VTCViews = db.Column(db.Integer)
+
 
 
 class VideoTopCompany(db.Model):
