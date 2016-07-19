@@ -155,8 +155,10 @@ class VideoTopCompany(db.Model):
     #                                primaryjoin='report_month.month_name==VideoTopCompany.VTCPeriod')
     #report_year =  db.relationship('ReportMonth', lazy='joined', primaryjoin='report_month.month_year==VideoTopCompany.VTCYear')
 
-
-
+Masterclass_Top_Companies = db.Table('VW_TOP_COMPANIES_MASTERCLASS',db.metadata,
+                                  db.Column("VTCVID",db.Integer),
+                                  db.Column("SUM_VIEWS",db.Integer),
+                                  db.Column("VTCCompany",db.String(100)))
 
 '''
 class TagList(db.Model):
