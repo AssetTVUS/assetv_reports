@@ -8,46 +8,49 @@
             <h2>put the header here</h2>
     </div>
      <div id="channel_report_page_2_row1" class="row">
-         <div id="channel_report_page_2_row1_cell_1">
+         <div id="channel_report_page_2_row1_cell_1" class="col-md-8">
              <div class="channel_report_page2_thumbnail">
                  <img src="{{body.most_watched_video}}">
              </div>
              <div class="channel_report_page2_thumbnail_stats">
-                 <p>MOST WATCHED VIDEO<br/>{{body.most_watched_video_title}}</p>
-                 <p>VIEWS: {{body.most_watched_video_views}}</p>
-                 <p>HOURS: {{body.most_watched_video_hours}}</p>
+                 <p class="channel_report_page2_blue_watched">MOST WATCHED VIDEO<br/></p>
+                 <p>{{body.most_watched_video_title}}</p>
+
+                 <p class="channel_report_page2_blue_views">VIEWS: {{'{0:,}'.format(body.most_watched_video_views)}}</p>
+                 <p class="channel_report_page2_blue_hours">HOURS: {{'{0:,}'.format(body.most_watched_video_hours)}}</p>
              </div>
          </div>
-         <div id="channel_report_page_2_row1_cell_2">
+         <div id="channel_report_page_2_row1_cell_2" class="col-md-2">
              <img src="{{ url_for('static', filename='image/channel_images/11.jpg') }}">
          </div>
-         <div id="channel_report_page_2_row1_cell_3">
-               <p>{{body.total_views}}</p><h3>TOTAL VIEWS</h3>
+         <div id="channel_report_page_2_row1_cell_3" class="col-md-2">
+               <p class="channel_report_page2_blue_numbers">{{'{0:,}'.format(body.total_views)}}</p><h3>TOTAL VIEWS</h3>
          </div>
 
      </div>
      <div id="channel_report_page_2_row2" class="row">
-         <div id="channel_report_page_2_row2_cell_1">
+         <div id="channel_report_page_2_row2_cell_1" class="col-md-8">
              <div class="channel_report_page2_thumbnail">
                  <img src="{{body.second_most_watched_video}}">
              </div>
              <div class="channel_report_page2_thumbnail_stats">
-                 <p>SECOND MOST WATCHED VIDEO<br/>{{body.second_most_watched_video_title}}</p>
-                 <p>VIEWS: {{body.second_most_watched_video_views}}</p>
-                 <p>HOURS: {{body.second_most_watched_video_hours}}</p>
+                 <p class="channel_report_page2_blue_watched">SECOND MOST WATCHED VIDEO<br/></p>
+                 <p>{{body.second_most_watched_video_title}}</p>
+                 <p class="channel_report_page2_blue_views">VIEWS: {{'{0:,}'.format(body.second_most_watched_video_views)}}</p>
+                 <p class="channel_report_page2_blue_hours">HOURS: {{'{0:,}'.format(body.second_most_watched_video_hours)}}</p>
              </div>
          </div>
-        <div id="channel_report_page_2_row2_cell_2">
+        <div id="channel_report_page_2_row2_cell_2" class="col-md-2">
                  <img src="{{ url_for('static', filename='image/channel_images/5.jpg') }}">
          </div>
-        <div id="channel_report_page_2_row2_cell_3">
-                  <p>{{body.total_time_hours}}</p><h3>TOTAL TIME (HR)</h3>
+        <div id="channel_report_page_2_row2_cell_3" class="col-md-2">
+                  <p class="channel_report_page2_blue_numbers">{{'{0:,}'.format(body.total_time_hours)}}</p><h3>TOTAL TIME (HR)</h3>
          </div>
 
      </div>
      <div id="channel_report_page_2_row3" class="row">
-         <div id="channel_report_page_2_row3_cell_1">
-            <h2>TOP 10 VIEWING COMPANIES</h2>
+         <div id="channel_report_page_2_row3_cell_1" class="col-md-5">
+            <h2 class="channel_report_page2_blue_titles">TOP 10 VIEWING COMPANIES</h2>
                 <div  id="top_companies">
                     <ol>
                         {% for company in body.top_companies %}
@@ -57,45 +60,50 @@
                 </div> <!-- end of top companies -->
          </div>
          <div id="channel_report_page_2_row3_cell_2">
-
-             <div id="channel_report_page_2_row3_cell_2a">
-                 <img src="{{ url_for('static', filename='image/channel_images/10.jpg') }}">
+             <div class="row">
+                  <div id="channel_report_page_2_row3_cell_2a" class="col-md-5">
+                      <img src="{{ url_for('static', filename='image/channel_images/10.jpg') }}">
+                  </div>
+                 <div id="channel_report_page_2_row3_cell_2b" class="col-md-7">
+                      <p>{{body.average_time_minutes}}</p><h3>AVERAGE TIME (MIN)</h3>
+                 </div>
              </div>
-             <div id="channel_report_page_2_row3_cell_2b">
-                 <p>{{body.average_time_minutes}}</p><h3>AVERAGE TIME (MIN)</h3>
+             <div class="row">
+                 <div id="channel_report_page_2_row3_cell_2c" class="col-md-3">
+                      <img src="{{ url_for('static', filename='image/channel_images/7.jpg') }}">
+                 </div>
+                 <div id="channel_report_page_2_row3_cell_2d" class="col-md-2">
+                     <p>{{body.new_videos_published}}</p><h3>NEW VIDEOS PUBLISHED</h3>
+                 </div>
              </div>
-             <div id="channel_report_page_2_row3_cell_2c">
-                  <img src="{{ url_for('static', filename='image/channel_images/7.jpg') }}">
-             </div>
-             <div id="channel_report_page_2_row3_cell_2d" class="row">
-                 <p>{{body.new_videos_published}}</p><h3>NEW VIDEOS PUBLISHED</h3>
-             </div>
-             <div id="channel_report_page_2_row3_cell_2e " >
-                 <img src="{{ url_for('static', filename='image/channel_images/1.jpg') }}">
-             </div>
-             <div id="channel_report_page_2_row3_cell_2f">
-                  <p>{{body.average_video_engagement}}</p><h3>AVERAGE VIDEO ENGAGEMENT</h3>
+             <div class="row">
+                  <div id="channel_report_page_2_row3_cell_2e" class="col-md-3">
+                     <img src="{{ url_for('static', filename='image/channel_images/1.jpg') }}">
+                  </div>
+                 <div id="channel_report_page_2_row3_cell_2f" class="col-md-2">
+                      <p>{{body.average_video_engagement}}</p><h3>AVERAGE VIDEO ENGAGEMENT</h3>
+                 </div>
              </div>
          </div>
 
 
      </div>
-    <!--
+
      <div id="channel_report_page_2_row4" class="row">
-             <div id="channel_report_page_2_row4_cell_2a">
-              <img src="{{ url_for('static', filename='image/channel_images/13.png') }}">
+             <div id="channel_report_page_2_row4_cell_2a" class="col-md-2">
+                <img src="{{ url_for('static', filename='image/channel_images/13.png') }}">
              </div>
-             <div id="channel_report_page_2_row4_cell_2b">
+             <div id="channel_report_page_2_row4_cell_2b" class="col-md-6">
                <h2>TOP VIEWING MONTH:<br/><p>{{footer.month_name}}</p></h2>
              </div>
-             <div id="channel_report_page_2_row4_cell_2c">
-              <p>{{footer.month_views}}</p><br/><h3>VIEWS</h3>
+             <div id="channel_report_page_2_row4_cell_2c" class="col-md-2">
+              <p class="channel_report_page2_blue_titles">{{'{0:,}'.format(footer.month_views)}}</p><br/><h5>VIEWS</h5>
              </div>
-             <div id="channel_report_page_2_row4_cell_2d">
-               <p>{{footer.hours_watched}}</p><br/><h3>HOURS WATCHED</h3>
+             <div id="channel_report_page_2_row4_cell_2d" class="col-md-2">
+               <p class="channel_report_page2_blue_titles">{{'{0:,}'.format(footer.hours_watched)}}</p><br/><h5>HOURS WATCHED</h5>
              </div>
      </div>
-     -->
+
 </div>
 
 {%- endblock %}

@@ -61,20 +61,25 @@ div#channel_report_page_2_row2_cell_1{width:500px;height: 170px;}
 div#channel_report_page_2_row1_cell_2,
 div#channel_report_page_2_row2_cell_2 {width:200px;}
 
+p.channel_report_page2_blue_watched{color:#008dd4;font-weight: bold;}
+p.channel_report_page2_blue_views{color:#008dd4;font-weight: bold;}
+p.channel_report_page2_blue_hours{color:#008dd4;font-weight: bold;}
+h2.channel_report_page2_blue_titles{color:#008dd4;font-weight: bold;}
+p.channel_report_page2_blue_titles{color:#008dd4;font-weight: bold;font-size:250%;}
 
 div.channel_report_page2_thumbnail img {width:50%;height:50%;float:left;}
 div.channel_report_page2_thumbnail_stats{float:left;width:200px;}
+
 div#channel_report_page_2_row1_cell_2 img,
 div#channel_report_page_2_row2_cell_2 img,
 div#channel_report_page_2_row3_cell_2 img,
-div#channel_report_page_2_row3_cell_2c img{width:50%;height:50%;float:left;}
+div#channel_report_page_2_row3_cell_2c img,
+div#channel_report_page_2_row3_cell_2e img{width:50%;height:50%;float:left;}
 
-div#channel_report_page_2_row3_cell_1 {
-    height: 300px;
-    width: 500px;
-}
-
-div#channel_report_page_2_row3_cell_1{height:500px;}
+div#channel_report_page_2_row3_cell_2a img{margin-left: -90px;}
+div#channel_report_page_2_row3_cell_2c img{margin-left: -90px;}
+div#channel_report_page_2_row3_cell_2e img{margin-left: -90px;}
+div#channel_report_page_2_row3_cell_2b  {margin-left: -120px;}
 
 div#channel_report_page_2_row3,
 div#channel_report_page_2_row3_cell_2,
@@ -83,12 +88,11 @@ div#channel_report_page_2_row3_cell_2b,
 div#channel_report_page_2_row3_cell_2c,
 div#channel_report_page_2_row3_cell_2d{height:300px;}
 
+
 div#channel_report_page_2_row3_cell_2,
 div#channel_report_page_2_row3_cell_2a,
 div#channel_report_page_2_row3_cell_2b,
-/*div#channel_report_page_2_row3_cell_2c,*/
 div#channel_report_page_2_row3_cell_2d,
-div#channel_report_page_2_row3_cell_2e,
 div#channel_report_page_2_row3_cell_2f,
 div#channel_report_page_2_row4,
 div#channel_report_page_2_row4_cell_2a,
@@ -98,13 +102,14 @@ div#channel_report_page_2_row4_cell_2d,
 div#channel_report_page_2_row4_cell_2e,
 div#channel_report_page_2_row4_cell_2f{float:left;}
 
-div#channel_report_page_2_row4_cell_2b{width:400px;}
+div#channel_report_page_2_row4{margin-top: 500px;}
+div#channel_report_page_2_row4_cell_2a img{width:75%;height:50%;float:left;}
 
 /*     ----- Print media queries------   */
 @media print {
 
     div#sidebar-wrapper{display:none;width:0;}
-    div#channel{width:auto;margin:100px 0 0 -250px;}
+    div#channel{width:auto;margin:100px 0 0 -450px;}
 
     channel_page2 {page-break-before: always;}
 }

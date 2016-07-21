@@ -1,11 +1,12 @@
-from flask import render_template, request, make_response
+from flask import render_template, request, make_response, url_for
 from sqlalchemy import desc
 from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
 from models import Video_Tag, TopCompany, ReportMonth, CurrentMonth,VideoTopCompany
-from models import Masterclass_Top_Companies, Month_Report
+from models import Masterclass_Top_Companies, Month_Report, Channel_Reports
 from forms import VideoByNameForm, VideoEditForm , CompanyByNameForm
+#from flask_weasyprint import HTML, render_pdf
 
 @app.route('/')
 @app.route('/index')
@@ -335,8 +336,7 @@ def produce_single_report(video_id):
         if len(results) < 6:
             adjust_results(barchart_ticks, barchart_data, results)
 
-        print barchart_ticks
-        print barchart_data
+
         return render_template('graph.html', summary=summary, url=url, header=header, caption=caption,
                                top_companies=top_companies, url_video=url_video, audience_profile=audience_profile,
                                barchart_data=barchart_data, barchart_ticks=barchart_ticks)
@@ -377,8 +377,49 @@ def  adjust_results(barchart_ticks, barchart_data,results):
 
 
     return
+@app.route('/search/channel_report', methods=['GET','POST'])
+def channel_report_search():
+    form = CompanyByNameForm()
+    results = None
+
+    if form.validate_on_submit():
+        company_name = '%' + form.CName.data + '%'
+        results = Company_List.query.filter(Company_List.CName.ilike(company_name.encode("utf-8"))).all()
+        for r in results:
+            print r
+    return render_template('channel_report_company_search.html',results=results,form=form)
 
 
+# ------------------------------------------
+#       channel reports - type 1
+# ------------------------------------------
+
+@app.route('/channel_report/1/<company_name>',methods=['POST'])
+def channel_report_1(company_name):
+
+    #
+    # get the viewing stats for the channel reports
+    #
+
+    viewing_stats = db.session.query(Channel_Reports).filter_by(T_TAG=company_name).all()
+    if not viewing_stats:
+        return render_template('error.html',
+                        error_message='No data for the current reporting period, check database')
+
+    #
+    # compute totals and averages
+    #
+    total_views = 0
+    total_hours = 0
+    average_time_minutes  = 0
+
+    for vs in viewing_stats:
+        total_views = total_views + vs.Total_Views
+        total_hours = total_hours + vs.Total_Hours
+        #total_viewing_duration = total_viewing_duration
+        average_time_minutes = total_hours * 60 / total_views
+
+    return make_response('<h1>channel_report_1  ' + company_name + ' /' + str(total_views) + '</h1>')
 
 @app.route('/graph', methods=['GET'])
 def graph():
@@ -522,7 +563,7 @@ def graph3():
 
     body['most_watched_video'] = "https://www.assettv.com/sites/default/files/video/images/importanceofsavingfor.jpg"
     body['most_watched_video_title'] = "The  importance of saving for retirement"
-    body['most_watched_video_views'] = '2937'
+    body['most_watched_video_views'] = 2937
     body['most_watched_video_hours'] = 73
 
 
@@ -545,3 +586,8 @@ def graph3():
     # use J.P Morgan Asset Management
     #return render_template('channel.html')
     return render_template('channel_report_page_2.html',body = body, footer = footer)
+
+#@app.route('/hello')
+#def hello_pdf(name):
+#    # Make a PDF from another view
+#    return render_pdf(url_for('graph3'))

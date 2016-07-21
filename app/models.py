@@ -72,14 +72,10 @@ class Single_Report_View(db.Model):
     V_DatePublished = db.Column(db.DateTime)
     VType  = db.Column(db.String(20))
     total_views = db.Column(db.Integer)
-
-
     Completed_Views  = db.Column(db.Integer)
     Avgerage_Minutes  = db.Column(db.Float)
     Total_Hours  = db.Column(db.Float)
     V_Duration  = db.Column(db.Float)
-
-
     Wirehouse_Advisors = db.Column(db.Float)
     Independent_BD = db.Column(db.Float)
     RIA  = db.Column(db.Float)
@@ -168,6 +164,27 @@ Masterclass_Top_Companies = db.Table('VW_TOP_COMPANIES_MASTERCLASS',db.metadata,
                                   db.Column("VTCVID",db.Integer),
                                   db.Column("SUM_VIEWS",db.Integer),
                                   db.Column("VTCCompany",db.String(100)))
+
+Channel_Reports = db.Table('VW_CHANNEL_REPORTS ', db.metadata,
+                        db.Column('T_TAG',db.String(200)),
+                        db.Column('V_ID',db.Integer),
+                        db.Column('V_DatePublished',db.Date),
+                        db.Column('VType',db.String(20)),
+                        db.Column('SPeriod', db.String(20)),
+                        db.Column('SYear',db.Integer),
+                        db.Column('Total_Views',db.Integer),
+                        db.Column('Avgerage_Minutes',db.Integer),
+                        db.Column('Total_Hours',db.Float),
+                        db.Column('Completed_Views', db.Integer),
+                        db.Column('Wirehouse_Advisors',db.Float),
+                        db.Column('Independent_BD',db.Float),
+                        db.Column('RIA',db.Float),
+                        db.Column('Investment_Consultant',db.Float),
+                        db.Column('Plan_Sponsor',db.Float),
+                        db.Column('Asset_Manager',db.Float),
+                        db.Column('Other',db.Float)
+
+)
 
 '''
 class TagList(db.Model):
