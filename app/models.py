@@ -155,6 +155,15 @@ class VideoTopCompany(db.Model):
     #                                primaryjoin='report_month.month_name==VideoTopCompany.VTCPeriod')
     #report_year =  db.relationship('ReportMonth', lazy='joined', primaryjoin='report_month.month_year==VideoTopCompany.VTCYear')
 
+class Month_Report(db.Model):
+    __tablename__ = 'Month_report'
+    month_id = db.Column(db.Integer, primary_key = True)
+    month_short_name = db.Column(db.String(3))
+    month_name = db.Column(db.String(20))
+    month_number = db.Column(db.Integer)
+    month_year = db.Column(db.Integer)
+
+
 Masterclass_Top_Companies = db.Table('VW_TOP_COMPANIES_MASTERCLASS',db.metadata,
                                   db.Column("VTCVID",db.Integer),
                                   db.Column("SUM_VIEWS",db.Integer),

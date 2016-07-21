@@ -4,7 +4,7 @@ from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
 from models import Video_Tag, TopCompany, ReportMonth, CurrentMonth,VideoTopCompany
-from models import Masterclass_Top_Companies
+from models import Masterclass_Top_Companies, Month_Report
 from forms import VideoByNameForm, VideoEditForm , CompanyByNameForm
 
 @app.route('/')
@@ -167,11 +167,11 @@ def produce_single_report(video_id):
                if caption_results:
                    for c in caption_results:
                        if c.tag_type =='People':
-                           caption = caption + c.tag_name  + ', '
+                           caption = caption + c.tag_name
                        if c.tag_type == 'Companies':
                            header['commpany_name'] =  c.tag_name  # add Company Name to Header dict
 
-                   caption = caption.rstrip(', ')  # remove last comma
+                   caption = 'PARTICIPANTS | ' + caption + ' of ' + header['commpany_name']
 
 
                #
@@ -204,12 +204,18 @@ def produce_single_report(video_id):
                barchart_ticks = []
 
                for index in range(len(results)):
-                   # make ticks in the format of 1-JAN, 1-MAR
-                   barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
+                   # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
+                   if  results[index].month_short_name[0].isdigit:   ## is the first character a digit
+                       barchart_ticks.append([index,  results[index].month_short_name.encode("utf-8")])
+                   else:
+                       barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
                    barchart_data.append([index, results[index].total_views])
 
-
-
+               #
+               # do we have enough barchart data? We need 6 bars in graph!
+               #
+               if len(results) < 6:
+                   adjust_results(barchart_ticks,barchart_data,results)
 
                return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
                    top_companies = top_companies, url_video = url_video, audience_profile = audience_profile,
@@ -300,21 +306,78 @@ def produce_single_report(video_id):
         top_companies_result = db.session.query(Masterclass_Top_Companies).filter_by(VTCVID=video_id).\
             order_by(desc('VW_TOP_COMPANIES_MASTERCLASS.SUM_VIEWS')).all()
 
-
+       #
+        # get the data for the bar chart
+        #
         for index in range(len(top_companies_result)):
-            if index == 10:
+            if index == 10 :
                 break
-            top_companies.append(top_companies_result[index].VTCCompany)
+            else:
+                top_companies.append(top_companies_result[index].VTCCompany)
 
         #
         # get the data for the bar chart
         #
-        barchart_data = []
         barchart_ticks = []
+        barchart_data = []
 
+        for index in range(len(results)):
+            # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
+            if results[index].month_short_name[0].isdigit:  ## is the first character a digit
+                barchart_ticks.append([index, results[index].month_short_name.encode("utf-8")])
+            else:
+                barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
+            barchart_data.append([index, results[index].total_views])
+
+            #
+            # do we have enough barchart data? We need 6 bars in graph!
+            #
+        if len(results) < 6:
+            adjust_results(barchart_ticks, barchart_data, results)
+
+        print barchart_ticks
+        print barchart_data
         return render_template('graph.html', summary=summary, url=url, header=header, caption=caption,
                                top_companies=top_companies, url_video=url_video, audience_profile=audience_profile,
                                barchart_data=barchart_data, barchart_ticks=barchart_ticks)
+
+def  adjust_results(barchart_ticks, barchart_data,results):
+
+    top_value = -999
+
+
+    #compute top_value
+    for b in barchart_data:
+        # each element in this list is another list
+        if b[1] > top_value:
+            top_value = b[1]
+
+    #get last index used in array
+
+    #get our highest month from result set,
+    # the result set is sort by month_id , so take last element in list
+    highest_month = results[len(results) -1].month_id + 1  #bump it up by 1
+
+    #use to point to the lsit
+    list_pointer = len(results) -1
+
+    #we need this many months
+    limit = 6- len(barchart_data)
+
+    # how much are we missing?
+    if len(barchart_data) < 6:
+        month_result = Month_Report.query.filter(Month_Report.month_id>=highest_month).limit(limit)
+
+
+    for m in  month_result:
+        list_pointer = list_pointer + 1
+        tick = '1-' + m.month_short_name.encode("utf-8")
+        barchart_ticks.append([list_pointer,tick])
+        barchart_data.append([list_pointer,top_value])
+
+
+    return
+
 
 
 @app.route('/graph', methods=['GET'])

@@ -100,8 +100,11 @@ div.master_class_row_2_cell{float:left;}
 
 
 div#piechart-container{
-   width:270px;height:210px;
+   width:300px;height:250px;
 }
+
+/* inside piechart, the legend */
+td.legendLabel {font-size:14px;}
 
 /*
    Top Viewing Companies on Masterclass Report
@@ -119,7 +122,8 @@ div.master_class_barchart{width:370px;height:220px; }
 
 div.masterclass_report_subheader h4 {width:370px;height:20px;padding-bottom: 25px;font-family: 'PT Sans Narrow'}
 
-div#master_class_footer{padding-top:20px;}
+div#master_class_footer{margin-top:150px;}
+div#master_class_footer_cell_1{float:left;}
 img#watch_on_tv {padding-left:100px;}
 img#logo_white {padding-left:220px;}
 
@@ -195,10 +199,17 @@ div#channel_page1_report_date p, div#channel_page1_stats_type p{
 
 
 
+  a[href]:after {
+    content: none !important;
+  }
+
+
     div#masterclass_report_name p {z:index:6;}
     div#sidebar-wrapper{display:none;}
     div#singleclass,div#masterclass,div#channel{width:auto;margin:100px 0 0 -250px;}
-    a {display:none;}
+
+    div#master_class_row_1,div.master_class_row_1_cell,table#master_class_table{size:80%;}
+
 
     img#logo_white {padding-left:320px;,size: 150%}
 
