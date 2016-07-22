@@ -52,7 +52,7 @@ def search_company():
 
 @app.route('/edit/company/<key>', methods=['POST'])
 def get_company(key):
-    company = Company.query.get(key)
+    #company = Company.query.get(key)
     form = VideoEditForm(request.form)
     #form.populate_obj(video)
     print 'ready to render template'
@@ -411,13 +411,13 @@ def channel_report_1(company_name):
     #
     total_views = 0
     total_hours = 0
-    average_time_minutes  = 0
+    #average_time_minutes  = 0
 
     for vs in viewing_stats:
         total_views = total_views + vs.Total_Views
         total_hours = total_hours + vs.Total_Hours
         #total_viewing_duration = total_viewing_duration
-        average_time_minutes = total_hours * 60 / total_views
+        #average_time_minutes = total_hours * 60 / total_views
 
     return make_response('<h1>channel_report_1  ' + company_name + ' /' + str(total_views) + '</h1>')
 

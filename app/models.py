@@ -185,6 +185,64 @@ Channel_Reports = db.Table('VW_CHANNEL_REPORTS ', db.metadata,
                         db.Column('Other',db.Float)
 
 )
+class VideoStats(db.Model):
+    __tablename__ = 'VideoStats'
+    VS_ID = db.Column(db.Integer, primary_key = True)
+    V_ID = db.Column(db.Integer)
+    VType = db.Column(db.String(20))
+    SPeriod = db.Column(db.String(20))
+    SYear  = db.Column(db.Integer)
+    Total_Views  = db.Column(db.Integer)
+    Avgerage_Minutes = db.Column(db.Float)
+    Total_Hours = db.Column(db.Float)
+    Completed_Views = db.Column(db.Integer)
+    Terminal_Views  = db.Column(db.Integer)
+    Wirehouse_Advisors = db.Column(db.Float)
+    Independent_BD = db.Column(db.Float)
+    RIA = db.Column(db.Float)
+    Insurance_CPAs_BankTrust = db.Column(db.Float)
+    Investment_Consultant = db.Column(db.Float)
+    Endowment_Foundation = db.Column(db.Float)
+    Plan_Sponsor = db.Column(db.Float)
+    Asset_Manager = db.Column(db.Float)
+    PrivateBank_WM = db.Column(db.Float)
+    IFA = db.Column(db.Float)
+    Other = db.Column(db.Float)
+    Finished  = db.Column(db.Integer)
+    VSMonth  = db.Column(db.Integer)
+    VSArea  = db.Column(db.Integer)
+
+class AudienceProfile(db.Model):
+    __tablename__ = 'AudienceProfile'
+    APID  = db.Column(db.Integer, primary_key = True)
+    APCID   = db.Column(db.Integer)
+    APPeriod  = db.Column(db.String(255))
+    APYear  = db.Column(db.Integer)
+    APWirehouseAdvisors   = db.Column(db.Float)
+    APindependent_BD   = db.Column(db.Float)
+    APRIA = db.Column(db.Float)
+    APInsurance_CPAs_BankTrust  = db.Column(db.Float)
+    APInvestmentConsultant  = db.Column(db.Float)
+    APEndowment_Foundation  = db.Column(db.Float)
+    APPlanSponsor  = db.Column(db.Float)
+    APAssetManager  = db.Column(db.Float)
+    APPrivateBank_WM  = db.Column(db.Float)
+    APIFA  = db.Column(db.Float)
+    APOther  = db.Column(db.Float)
+    APArea  = db.Column(db.Integer)
+
+class TopCompany_Table(db.Model):
+    __tablename__ = 'TopCompany'
+    TCID = db.Column(db.Integer, primary_key = True)
+    TCCID = db.Column(db.Integer)
+    TCCID  = db.Column(db.Integer)
+    TCPeriod = db.Column(db.String(255))
+    TCYear  = db.Column(db.Integer)
+    TCCompany= db.Column(db.String(255))
+    TCViews  = db.Column(db.Integer)
+    TCMonth  = db.Column(db.Integer)
+    TCArea  = db.Column(db.Integer)
+
 
 '''
 class TagList(db.Model):
