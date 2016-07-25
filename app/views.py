@@ -1,4 +1,6 @@
+import warnings
 from flask import render_template, request, make_response, url_for
+from openpyxl import load_workbook
 from sqlalchemy import desc
 from app import app
 from app import db
@@ -116,6 +118,8 @@ def produce_single_report(video_id):
     #dictionary for report header
     header = {}
 
+    #dictionary for audience profile in spreadsheet
+    audience_profile_dict = {}
     if single:
 
         #----------------------------------
@@ -138,7 +142,10 @@ def produce_single_report(video_id):
                point=['Independent B/D' ,result_row.Independent_BD*100 ]
                audience_profile.append(point)
 
-               point = ['RIA' , result_row.RIA*10 ]
+               point = ['RIA' , result_row.RIA*100 ]
+               audience_profile.append(point)
+
+               point = ['Insurance_CPAs_BankTrust',result_row.Insurance_CPAs_BankTrust*100]
                audience_profile.append(point)
 
                point = ['Investment Consultant' , result_row.Investment_Consultant*100 ]
@@ -147,12 +154,24 @@ def produce_single_report(video_id):
                point = [ 'Plan Sponsor' , result_row.Plan_Sponsor*100 ]
                audience_profile.append(point)
 
+               point = ['Endowment_Foundation', result_row.Endowment_Foundation * 100]
+               audience_profile.append(point)
+
                point = ['Asset Manager' , result_row.Asset_Manager*100 ]
                audience_profile.append(point)
 
                point = [ 'Other' ,result_row.Other*100 ]
                audience_profile.append(point)
 
+               audience_profile_dict['Wirehouse Advisors'] = result_row.Wirehouse_Advisors
+               audience_profile_dict['Independent B/D'] =result_row.Independent_BD
+               audience_profile_dict['RIA'] = result_row.RIA
+               audience_profile_dict['Insurance_CPAs_BankTrust'] = result_row.Insurance_CPAs_BankTrust
+               audience_profile_dict['Investment Consultant'] = result_row.Investment_Consultant
+               audience_profile_dict['Plan Sponsor'] = result_row.Plan_Sponsor
+               audience_profile_dict['Endowment_Foundation']  =  result_row.Endowment_Foundation
+               audience_profile_dict['Asset Manager'] = result_row.Asset_Manager
+               audience_profile_dict['Other'] = result_row.Other
 
                # URL for Image and Video links
                url_video = result_row.V_VideoLink
@@ -168,22 +187,25 @@ def produce_single_report(video_id):
                if caption_results:
                    for c in caption_results:
                        if c.tag_type =='People':
-                           caption = caption + c.tag_name
+                           header['speaker'] = c.tag_name
                        if c.tag_type == 'Companies':
-                           header['commpany_name'] =  c.tag_name  # add Company Name to Header dict
+                           header['company_name'] =  c.tag_name
 
-                   caption = 'PARTICIPANTS | ' + caption + ' of ' + header['commpany_name']
+                   caption = 'PARTICIPANTS | ' + header['speaker'] + ' of ' + header['company_name']
 
 
                #
                # complete the report header
                #
 
-               header['published_date'] = 'PUBLISHED | ' +  result_row.V_DatePublished.strftime('%B %d,%Y')
+               header['published_date'] = result_row.V_DatePublished.strftime('%B %d,%Y')
+               #header['published_date'] = 'PUBLISHED | ' + result_row.V_DatePublished.strftime('%B %d,%Y')
                header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
                header['masterclass'] = masterclass
                header['single'] = single
                header['report_name'] = result_row.V_Title
+
+               spreadsheet_name = result_row.V_Title + '_' + str(result_row.SPeriod) + '_' + str(result_row.SYear) + '.xlsx'
 
                #
                # top companies
@@ -205,8 +227,9 @@ def produce_single_report(video_id):
                barchart_ticks = []
 
                for index in range(len(results)):
+
                    # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
-                   if  results[index].month_short_name[0].isdigit:   ## is the first character a digit
+                   if  results[index].month_short_name[0].isdigit():   ## is the first character a digit
                        barchart_ticks.append([index,  results[index].month_short_name.encode("utf-8")])
                    else:
                        barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
@@ -215,12 +238,81 @@ def produce_single_report(video_id):
                #
                # do we have enough barchart data? We need 6 bars in graph!
                #
-               if len(results) < 6:
-                   adjust_results(barchart_ticks,barchart_data,results)
+               #if len(results) < 6:
+               #    adjust_results(barchart_ticks,barchart_data,results)
 
-               return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
-                   top_companies = top_companies, url_video = url_video, audience_profile = audience_profile,
-                   barchart_data  = barchart_data ,barchart_ticks = barchart_ticks)
+               #return render_template('graph.html',summary=summary, url=url,header = header, caption = caption,
+               #    top_companies = top_companies, url_video = url_video, audience_profile = audience_profile,
+               #    barchart_data  = barchart_data ,barchart_ticks = barchart_ticks)
+
+               # get workbook
+
+
+               try:
+                   warnings.simplefilter("ignore")
+
+                   workbook = load_workbook('Single_Video_Data_Table.xlsx')
+                   ws = workbook.get_sheet_by_name("Sheet1")
+                   warnings.simplefilter("default")
+
+                   ws['A2'] = 'SINGLE'
+                   ws['B2']=  header['report_name'] # report title
+
+                   ws['F2'] = ''  # filmed_date
+                   ws['E2'] = header['published_date']
+                   ws['F2'] = summary['video_duration']
+                   ws['G2'] = header['company_name']  # participants
+                   ws['H2'] = header['speaker']  # participants
+                   ws['I2'] = url  # thumbnail image
+                   ws['J2'] = url_video
+                   ws['K2'] = summary['total_views']
+                   ws['L2'] = summary['total_viewing_duration']
+                   ws['M2'] = summary['average_view']
+                   ws['N2'] = str(current_month_number) + '/1/' + str(current_year)
+
+
+                   #top viewing companies
+                   index = 5
+                   rank = 1
+                   for t in top_companies:  #top company data D17 to D26
+                      print t,index
+                      ws['I' + str(index)] = t
+                      ws['J' + str(index)] = rank
+                      index = index +1
+                      rank = rank + 1
+
+                   # audience profile
+                   ws['G5'] = audience_profile_dict['Wirehouse Advisors']
+                   ws['G6'] = audience_profile_dict['Independent B/D']
+                   ws['G7'] = audience_profile_dict['RIA']
+                   ws['G8'] = audience_profile_dict['Insurance_CPAs_BankTrust']
+                   ws['G9'] = audience_profile_dict['Investment Consultant']
+                   ws['G10'] = audience_profile_dict['Plan Sponsor']
+                   ws['G11'] = audience_profile_dict['Endowment_Foundation']
+                   ws['G12'] = audience_profile_dict['Asset Manager']
+                   ws['G13'] = audience_profile_dict['Other']
+
+                   #views timeline
+                   index = 5
+                   for b in barchart_ticks:
+                       ws['L' + str(index)] = b[1]
+                       index = index + 1
+
+                   index =5
+                   for b in barchart_data:
+                       ws['M' + str(index)] = b[1]
+                       index = index + 1
+
+                   workbook.save(spreadsheet_name)
+                   return render_template('error.html',error_message='Good!')
+
+
+               except Exception as e:
+                   print str(e)
+                   return render_template('error.html',
+                                          error_message='Unable to complete spreadsheet')
+
+
 
         return render_template('error.html',
                 error_message='No data for the current reporting period, check database')
@@ -233,6 +325,7 @@ def produce_single_report(video_id):
 
         result_row = None
 
+
         # loop through results set to find current month
         for row in results:
            if row.SPeriod == current_month and row.SYear == current_year :
@@ -240,6 +333,11 @@ def produce_single_report(video_id):
         if not result_row:
             return render_template('error.html',
                 error_message='No data for the current reporting period, check database')
+
+        ##spreadsheet_name = result_row.V_Title + '_' + str(result_row.SPeriod) + '_' + str(
+        ##    result_row.SYear) + '.xlsx'
+
+        spreadsheet_name = 'meow.xlsx'
 
         # get viewing stats
         summary['total_viewing_duration'] =  0
@@ -272,6 +370,16 @@ def produce_single_report(video_id):
         point = ['Other', result_row.Other * 100]
         audience_profile.append(point)
 
+        audience_profile_dict['Wirehouse Advisors'] = result_row.Wirehouse_Advisors
+        audience_profile_dict['Independent B/D'] = result_row.Independent_BD
+        audience_profile_dict['RIA'] = result_row.RIA
+        audience_profile_dict['Insurance_CPAs_BankTrust'] = result_row.Insurance_CPAs_BankTrust
+        audience_profile_dict['Investment Consultant'] = result_row.Investment_Consultant
+        audience_profile_dict['Plan Sponsor'] = result_row.Plan_Sponsor
+        audience_profile_dict['Endowment_Foundation'] = result_row.Endowment_Foundation
+        audience_profile_dict['Asset Manager'] = result_row.Asset_Manager
+        audience_profile_dict['Other'] = result_row.Other
+
         # these guys are NOT sums
         url_video = results[0].V_VideoLink
         url = results[0].V_ImageURL
@@ -288,7 +396,7 @@ def produce_single_report(video_id):
                     caption = caption + c.tag_name + ', '
             caption = caption.rstrip(', ')  # remove last comma
 
-        header['published_date'] = 'PUBLISHED | ' + results[0].V_DatePublished.strftime('%B %d,%Y')
+        header['published_date'] = results[0].V_DatePublished.strftime('%B %d,%Y')
         header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
         header['masterclass'] = masterclass
         header['single'] = single
@@ -324,7 +432,7 @@ def produce_single_report(video_id):
 
         for index in range(len(results)):
             # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
-            if results[index].month_short_name[0].isdigit:  ## is the first character a digit
+            if results[index].month_short_name[0].isdigit():  ## is the first character a digit
                 barchart_ticks.append([index, results[index].month_short_name.encode("utf-8")])
             else:
                 barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
@@ -333,14 +441,79 @@ def produce_single_report(video_id):
             #
             # do we have enough barchart data? We need 6 bars in graph!
             #
-        if len(results) < 6:
-            adjust_results(barchart_ticks, barchart_data, results)
+        #if len(results) < 6:
+        #    adjust_results(barchart_ticks, barchart_data, results)
 
 
-        return render_template('graph.html', summary=summary, url=url, header=header, caption=caption,
-                               top_companies=top_companies, url_video=url_video, audience_profile=audience_profile,
-                               barchart_data=barchart_data, barchart_ticks=barchart_ticks)
+        #return render_template('graph.html', summary=summary, url=url, header=header, caption=caption,
+        #                       top_companies=top_companies, url_video=url_video, audience_profile=audience_profile,
+        #
+        #
+        #                     barchart_data=barchart_data, barchart_ticks=barchart_ticks)
+        # get workbook
 
+
+        try:
+            warnings.simplefilter("ignore")
+
+            workbook = load_workbook('Single_Video_Data_Table.xlsx')
+            ws = workbook.get_sheet_by_name("Sheet1")
+            warnings.simplefilter("default")
+
+            ws['A2'] = 'MASTERCLASS'
+            ws['B2'] = header['report_name']  # report title
+
+            ws['F2'] = ''  # filmed_date
+            ws['E2'] = header['published_date']
+            ws['F2'] = summary['video_duration']
+            #ws['G2'] = header['company_name']  # participants
+            ws['H2'] = caption  # participants
+            ws['I2'] = url  # thumbnail image
+            ws['J2'] = url_video
+            ws['K2'] = summary['total_views']
+            ws['L2'] = summary['total_viewing_duration']
+            ws['M2'] = summary['average_view']
+            ws['N2'] = str(current_month_number) + '/1/' + str(current_year)
+
+            # top viewing companies
+            index = 5
+            rank = 1
+            for t in top_companies:  # top company data D17 to D26
+                print t, index
+                ws['I' + str(index)] = t
+                ws['J' + str(index)] = rank
+                index = index + 1
+                rank = rank + 1
+
+            # audience profile
+            ws['G5'] = audience_profile_dict['Wirehouse Advisors']
+            ws['G6'] = audience_profile_dict['Independent B/D']
+            ws['G7'] = audience_profile_dict['RIA']
+            ws['G8'] = audience_profile_dict['Insurance_CPAs_BankTrust']
+            ws['G9'] = audience_profile_dict['Investment Consultant']
+            ws['G10'] = audience_profile_dict['Plan Sponsor']
+            ws['G11'] = audience_profile_dict['Endowment_Foundation']
+            ws['G12'] = audience_profile_dict['Asset Manager']
+            ws['G13'] = audience_profile_dict['Other']
+
+            # views timeline
+            index = 5
+            for b in barchart_ticks:
+                ws['L' + str(index)] = b[1]
+                index = index + 1
+
+            index = 5
+            for b in barchart_data:
+                ws['M' + str(index)] = b[1]
+                index = index + 1
+
+            workbook.save(spreadsheet_name)
+            return render_template('error.html', error_message='Good!')
+
+        except Exception as e:
+            print str(e)
+            return render_template('error.html',
+                                   error_message='Unable to complete spreadsheet')
 def  adjust_results(barchart_ticks, barchart_data,results):
 
     top_value = -999
