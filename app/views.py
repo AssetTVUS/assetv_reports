@@ -1,5 +1,6 @@
 import warnings
-from flask import render_template, request, make_response, url_for
+import os
+from flask import render_template, request, make_response, url_for, send_file
 from openpyxl import load_workbook
 from sqlalchemy import desc
 from app import app
@@ -96,9 +97,10 @@ def produce_single_report(video_id):
     if not current_month_stats:
         return render_template('error.html',error_message='Unable to retrieve the current reportng month/year, check database')
 
-    current_month = current_month_stats[0].month_name
-    current_year =  current_month_stats[0].month_year
-    current_month_number  = current_month_stats[0].month_number
+    current_month = current_month_stats[0].month_name # March, April .....
+    current_year =  current_month_stats[0].month_year # 2015, 2016 .....
+    current_month_number  = current_month_stats[0].month_number # 1 = Jan, 3 = Mar......
+    current_month_id = current_month_stats[0].month_id # 14,15,16 primary key for Month_Reports table
 
     # is this a single or masterclass video?
     masterclass = True
@@ -106,10 +108,6 @@ def produce_single_report(video_id):
     if results[0].VType == 'SINGLE':
         masterclass = False
         single = True
-
-
-
-
 
     # pie chart needs a list of list
     point = []
@@ -228,12 +226,15 @@ def produce_single_report(video_id):
 
                for index in range(len(results)):
 
-                   # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
-                   if  results[index].month_short_name[0].isdigit():   ## is the first character a digit
-                       barchart_ticks.append([index,  results[index].month_short_name.encode("utf-8")])
-                   else:
-                       barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
-                   barchart_data.append([index, results[index].total_views])
+                   if results[index].month_id <= current_month_id:
+
+
+                       # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
+                       if  results[index].month_short_name[0].isdigit():   ## is the first character a digit
+                           barchart_ticks.append([index,  results[index].month_short_name.encode("utf-8")])
+                       else:
+                           barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
+                       barchart_data.append([index, results[index].total_views])
 
                #
                # do we have enough barchart data? We need 6 bars in graph!
@@ -251,60 +252,62 @@ def produce_single_report(video_id):
                try:
                    warnings.simplefilter("ignore")
 
-                   workbook = load_workbook('Single_Video_Data_Table.xlsx')
+                   workbook = load_workbook('spreadsheets/Single_Video_Data_Table.xlsx')
                    ws = workbook.get_sheet_by_name("Sheet1")
                    warnings.simplefilter("default")
 
                    ws['A2'] = 'SINGLE'
-                   ws['B2']=  header['report_name'] # report title
+                   ws['B2'] = str(current_month_number) + '/1/' + str(current_year)
+                   ws['C2']=  header['report_name'] # report title
+                   ws['D2'] = header['published_date']
+                   ws['E2'] = summary['video_duration']
+                   ws['F2'] = header['company_name']  # participants
+                   ws['G2'] = header['speaker']  # participants
+                   ws['H2'] = url  # thumbnail image
+                   ws['I2'] = url_video
+                   ws['J2'] = summary['total_views']
+                   ws['K2'] = summary['total_viewing_duration']
+                   ws['L2'] = summary['average_view']
 
-                   ws['F2'] = ''  # filmed_date
-                   ws['E2'] = header['published_date']
-                   ws['F2'] = summary['video_duration']
-                   ws['G2'] = header['company_name']  # participants
-                   ws['H2'] = header['speaker']  # participants
-                   ws['I2'] = url  # thumbnail image
-                   ws['J2'] = url_video
-                   ws['K2'] = summary['total_views']
-                   ws['L2'] = summary['total_viewing_duration']
-                   ws['M2'] = summary['average_view']
-                   ws['N2'] = str(current_month_number) + '/1/' + str(current_year)
 
 
                    #top viewing companies
                    index = 5
                    rank = 1
                    for t in top_companies:  #top company data D17 to D26
-                      print t,index
-                      ws['I' + str(index)] = t
-                      ws['J' + str(index)] = rank
+
+                      ws['G' + str(index)] = t
+                      ws['H' + str(index)] = rank
                       index = index +1
                       rank = rank + 1
 
                    # audience profile
-                   ws['G5'] = audience_profile_dict['Wirehouse Advisors']
-                   ws['G6'] = audience_profile_dict['Independent B/D']
-                   ws['G7'] = audience_profile_dict['RIA']
-                   ws['G8'] = audience_profile_dict['Insurance_CPAs_BankTrust']
-                   ws['G9'] = audience_profile_dict['Investment Consultant']
-                   ws['G10'] = audience_profile_dict['Plan Sponsor']
-                   ws['G11'] = audience_profile_dict['Endowment_Foundation']
-                   ws['G12'] = audience_profile_dict['Asset Manager']
-                   ws['G13'] = audience_profile_dict['Other']
+                   ws['E5'] = audience_profile_dict['Wirehouse Advisors']
+                   ws['E6'] = audience_profile_dict['Independent B/D']
+                   ws['E7'] = audience_profile_dict['RIA']
+                   ws['E8'] = audience_profile_dict['Insurance_CPAs_BankTrust']
+                   ws['E9'] = audience_profile_dict['Investment Consultant']
+                   ws['E10'] = audience_profile_dict['Plan Sponsor']
+                   ws['E11'] = audience_profile_dict['Endowment_Foundation']
+                   ws['E12'] = audience_profile_dict['Asset Manager']
+                   ws['E13'] = audience_profile_dict['Other']
 
                    #views timeline
                    index = 5
                    for b in barchart_ticks:
-                       ws['L' + str(index)] = b[1]
+                       ws['A' + str(index)] = b[1]
                        index = index + 1
 
                    index =5
                    for b in barchart_data:
-                       ws['M' + str(index)] = b[1]
+                       ws['B' + str(index)] = b[1]
                        index = index + 1
 
                    workbook.save(spreadsheet_name)
-                   return render_template('error.html',error_message='Good!')
+                   #return render_template('error.html',error_message='Good!')
+
+                   return send_file(os.path.abspath('.') + '\\' + spreadsheet_name, as_attachment=True,
+                                    attachment_filename=spreadsheet_name)
 
 
                except Exception as e:
@@ -334,18 +337,18 @@ def produce_single_report(video_id):
             return render_template('error.html',
                 error_message='No data for the current reporting period, check database')
 
-        ##spreadsheet_name = result_row.V_Title + '_' + str(result_row.SPeriod) + '_' + str(
-        ##    result_row.SYear) + '.xlsx'
 
-        spreadsheet_name = 'meow.xlsx'
+
 
         # get viewing stats
         summary['total_viewing_duration'] =  0
         summary['total_views'] = 0
         summary['video_duration'] = result_row.V_Duration
+
         for result_row in results:
-            summary['total_views'] = summary['total_views'] + result_row.total_views
-            summary['total_viewing_duration'] = result_row.Total_Hours
+             if result_row.month_id <= current_month_id :
+                summary['total_views'] = summary['total_views'] + result_row.total_views
+                summary['total_viewing_duration'] = result_row.Total_Hours
 
         summary['average_view'] = summary['total_viewing_duration'] * 60 / summary['total_views']
 
@@ -400,12 +403,17 @@ def produce_single_report(video_id):
         header['report_date'] = 'VIEWING REPORT | ' + str(current_month_number) + '/1/' + str(current_year)
         header['masterclass'] = masterclass
         header['single'] = single
-        header['report_name'] = results[0].V_Title
+
+
 
         # chop MASTERCLASS TITLE
         temp = results[0].V_Title.strip('MASTERCLASS:')
         dash = temp.find('-', 1) - 1  # back up 1 position in fron of dash
         header['report_name'] = temp[1: dash]
+
+        spreadsheet_name = header['report_name'] + '_' + str(results[0].SPeriod) + '_' + str(
+            results[0].SYear) + '.xlsx'
+
 
         #
         # top companies
@@ -429,14 +437,20 @@ def produce_single_report(video_id):
         #
         barchart_ticks = []
         barchart_data = []
-
+        running_sum = 0
         for index in range(len(results)):
-            # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
-            if results[index].month_short_name[0].isdigit():  ## is the first character a digit
-                barchart_ticks.append([index, results[index].month_short_name.encode("utf-8")])
-            else:
-                barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
-            barchart_data.append([index, results[index].total_views])
+
+            if results[index].month_id <= current_month_id:
+                print results[index].month_id, current_month_id
+
+                # make ticks in the format of 1-JAN, 1-MAR , but look out for 1W
+                if results[index].month_short_name[0].isdigit():  ## is the first character a digit
+                    barchart_ticks.append([index, results[index].month_short_name.encode("utf-8")])
+                else:
+                    barchart_ticks.append([index, '1-' + results[index].month_short_name.encode("utf-8")])
+
+                running_sum = running_sum  + results[index].total_views
+                barchart_data.append([index, running_sum])
 
             #
             # do we have enough barchart data? We need 6 bars in graph!
@@ -455,60 +469,62 @@ def produce_single_report(video_id):
 
         try:
             warnings.simplefilter("ignore")
-
-            workbook = load_workbook('Single_Video_Data_Table.xlsx')
+            workbook = load_workbook('spreadsheets/Single_Video_Data_Table.xlsx')
             ws = workbook.get_sheet_by_name("Sheet1")
             warnings.simplefilter("default")
 
             ws['A2'] = 'MASTERCLASS'
-            ws['B2'] = header['report_name']  # report title
-
-            ws['F2'] = ''  # filmed_date
-            ws['E2'] = header['published_date']
-            ws['F2'] = summary['video_duration']
+            ws['B2'] = str(current_month_number) + '/1/' + str(current_year)
+            ws['C2'] = header['report_name']  # report title
+            ws['D2'] = header['published_date']
+            ws['E2'] = summary['video_duration']
             #ws['G2'] = header['company_name']  # participants
-            ws['H2'] = caption  # participants
-            ws['I2'] = url  # thumbnail image
-            ws['J2'] = url_video
-            ws['K2'] = summary['total_views']
-            ws['L2'] = summary['total_viewing_duration']
-            ws['M2'] = summary['average_view']
-            ws['N2'] = str(current_month_number) + '/1/' + str(current_year)
+            ws['G2'] = caption  # participants
+            ws['H2'] = url  # thumbnail image
+            ws['I2'] = url_video
+            ws['J2'] = summary['total_views']
+            ws['K2'] = summary['total_viewing_duration']
+            ws['L2'] = summary['average_view']
+
 
             # top viewing companies
             index = 5
             rank = 1
             for t in top_companies:  # top company data D17 to D26
-                print t, index
-                ws['I' + str(index)] = t
-                ws['J' + str(index)] = rank
+
+                ws['G' + str(index)] = t
+                ws['H' + str(index)] = rank
                 index = index + 1
                 rank = rank + 1
 
             # audience profile
-            ws['G5'] = audience_profile_dict['Wirehouse Advisors']
-            ws['G6'] = audience_profile_dict['Independent B/D']
-            ws['G7'] = audience_profile_dict['RIA']
-            ws['G8'] = audience_profile_dict['Insurance_CPAs_BankTrust']
-            ws['G9'] = audience_profile_dict['Investment Consultant']
-            ws['G10'] = audience_profile_dict['Plan Sponsor']
-            ws['G11'] = audience_profile_dict['Endowment_Foundation']
-            ws['G12'] = audience_profile_dict['Asset Manager']
-            ws['G13'] = audience_profile_dict['Other']
+            ws['E5'] = audience_profile_dict['Wirehouse Advisors']
+            ws['E6'] = audience_profile_dict['Independent B/D']
+            ws['E7'] = audience_profile_dict['RIA']
+            ws['E8'] = audience_profile_dict['Insurance_CPAs_BankTrust']
+            ws['E9'] = audience_profile_dict['Investment Consultant']
+            ws['E10'] = audience_profile_dict['Plan Sponsor']
+            ws['E11'] = audience_profile_dict['Endowment_Foundation']
+            ws['E12'] = audience_profile_dict['Asset Manager']
+            ws['E13'] = audience_profile_dict['Other']
 
             # views timeline
             index = 5
             for b in barchart_ticks:
-                ws['L' + str(index)] = b[1]
+                ws['A' + str(index)] = b[1]
                 index = index + 1
 
             index = 5
             for b in barchart_data:
-                ws['M' + str(index)] = b[1]
+                ws['B' + str(index)] = b[1]
                 index = index + 1
 
             workbook.save(spreadsheet_name)
-            return render_template('error.html', error_message='Good!')
+
+
+            return send_file(os.path.abspath('.') + '\\' + spreadsheet_name,as_attachment = True,
+                             attachment_filename=spreadsheet_name)
+
 
         except Exception as e:
             print str(e)
