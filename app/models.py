@@ -24,6 +24,14 @@ class Tag(db.Model):
     def __repr__(self):
         return '<Tag (%r) - %r>' % (self.T_ID,self.T_Tag)
 
+class TagList(db.Model):
+    TL_ID =  db.Column(db.Integer, primary_key=True)
+    TL_VID = db.Column(db.Integer,db.ForeignKey('Video.V_ID'))
+    TL_TID = db.Column(db.Integer,db.ForeignKey('Tag.T_ID'))
+    #video = db.relationship("Video", foreign_keys="Video.V_ID")
+    tag_name = db.relationship("Tag", foreign_keys="Tag.T_ID", \
+                               primaryjoin="and_(Tag.T_ID==TagList.TL_TID)")
+
 class Company(db.Model):
     CID = db.Column(db.Integer, primary_key=True)
     CName = db.Column(db.String(100))
@@ -161,32 +169,65 @@ class Month_Report(db.Model):
     month_number = db.Column(db.Integer)
     month_year = db.Column(db.Integer)
 
+month_table = db.Table('Month', db.metadata,
+                        db.Column('month',db.Integer),
+                        db.Column('month_name', db.String(20))
+)
 
 Masterclass_Top_Companies = db.Table('VW_TOP_COMPANIES_MASTERCLASS',db.metadata,
                                   db.Column("VTCVID",db.Integer),
                                   db.Column("SUM_VIEWS",db.Integer),
                                   db.Column("VTCCompany",db.String(100)))
 
-Channel_Reports = db.Table('VW_CHANNEL_REPORTS ', db.metadata,
-                        db.Column('T_TAG',db.String(200)),
-                        db.Column('V_ID',db.Integer),
+Channel_Reports = db.Table('VW_Video_Company_Tag_Stats', db.metadata,
+                        db.Column('TL_TID',db.Integer),
+                        db.Column('V_Title', db.String(200)),
                         db.Column('V_DatePublished',db.Date),
-                        db.Column('VType',db.String(20)),
+                        db.Column('V_Duration',db.Float),
+                        db.Column('V_VideoLink',db.String(500)),
+                        db.Column('V_ImageURL',db.String(500)),
+                        db.Column('VS_ID',db.Integer),
+                        db.Column('V_ID',db.Integer),
+                        db.Column('VType', db.String(20)),
                         db.Column('SPeriod', db.String(20)),
                         db.Column('SYear',db.Integer),
                         db.Column('Total_Views',db.Integer),
                         db.Column('Avgerage_Minutes',db.Integer),
                         db.Column('Total_Hours',db.Float),
                         db.Column('Completed_Views', db.Integer),
+                        db.Column('Terminal_Views', db.Integer),
                         db.Column('Wirehouse_Advisors',db.Float),
                         db.Column('Independent_BD',db.Float),
                         db.Column('RIA',db.Float),
+                        db.Column('Insurance_CPAs_BankTrust',db.Float),
                         db.Column('Investment_Consultant',db.Float),
+                        db.Column('Endowment_Foundation',db.Float),
                         db.Column('Plan_Sponsor',db.Float),
                         db.Column('Asset_Manager',db.Float),
-                        db.Column('Other',db.Float)
-
+                        db.Column('PrivateBank_WM', db.Float),
+                        db.Column('IFA',db.Float),
+                        db.Column('Other',db.Float),
+                        db.Column('Finished',db.Integer),
+                        db.Column('VSMonth', db.Integer),
+                        db.Column('VSArea',db.Integer)
 )
+
+Channel_Reports_Page1 = db.Table('VW_CHANNEL_REPORTS', db.metadata,
+                        db.Column('T_ID',db.Integer),
+                        db.Column('T_TAG',db.String(200)),
+                        db.Column('Sum_Total_Views', db.Integer),
+                        db.Column('Sum_Total_Hours',db.Float),
+                        db.Column('Sum_Completed_Views',db.Integer)
+)
+
+Channel_Reports_Last_Month = db.Table('VW_CHANNEL_REPORTS_LAST_MONTH',db.metadata,
+                        db.Column('month_id',db.Integer),
+                        db.Column('T_ID', db.Integer),
+                        db.Column('T_TAG', db.Integer),
+                        db.Column('Sum_Total_Views', db.Integer),
+                        db.Column('Sum_Total_Hours',db.Float)
+)
+
 class VideoStats(db.Model):
     __tablename__ = 'VideoStats'
     VS_ID = db.Column(db.Integer, primary_key = True)

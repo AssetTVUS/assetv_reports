@@ -2,14 +2,17 @@ import warnings
 import os
 from flask import render_template, request, make_response, url_for, send_file
 from openpyxl import load_workbook
+from openpyxl.writer.excel import save_workbook
 from sqlalchemy import desc
+from sqlalchemy.sql import func
 from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
 from models import Video_Tag, TopCompany, ReportMonth, CurrentMonth,VideoTopCompany
-from models import Masterclass_Top_Companies, Month_Report, Channel_Reports
+from models import Masterclass_Top_Companies, Month_Report, Channel_Reports, Tag,TagList
+from models import Channel_Reports_Page1,Channel_Reports_Last_Month, month_table
 from forms import VideoByNameForm, VideoEditForm , CompanyByNameForm
-#from flask_weasyprint import HTML, render_pdf
+
 
 @app.route('/')
 @app.route('/index')
@@ -203,7 +206,7 @@ def produce_single_report(video_id):
                header['single'] = single
                header['report_name'] = result_row.V_Title
 
-               spreadsheet_name = result_row.V_Title + '_' + str(result_row.SPeriod) + '_' + str(result_row.SYear) + '.xlsx'
+               spreadsheet_name = result_row.V_Title + '_' + str(result_row.SPeriod) + '_' + str(result_row.SYear) + '.xlsm'
 
                #
                # top companies
@@ -252,8 +255,8 @@ def produce_single_report(video_id):
                try:
                    warnings.simplefilter("ignore")
 
-                   workbook = load_workbook('spreadsheets/Single_Video_Data_Table.xlsx')
-                   ws = workbook.get_sheet_by_name("Sheet1")
+                   workbook = load_workbook('spreadsheets/TEMPLATE_Non-Channel_online.xlsm',keep_vba=True)
+                   ws = workbook.get_sheet_by_name("Source")
                    warnings.simplefilter("default")
 
                    ws['A2'] = 'SINGLE'
@@ -263,8 +266,8 @@ def produce_single_report(video_id):
                    ws['E2'] = summary['video_duration']
                    ws['F2'] = header['company_name']  # participants
                    ws['G2'] = header['speaker']  # participants
-                   ws['H2'] = url  # thumbnail image
-                   ws['I2'] = url_video
+                   ws['H2'] = url_video  # thumbnail image
+                   ws['I2'] = url
                    ws['J2'] = summary['total_views']
                    ws['K2'] = summary['total_viewing_duration']
                    ws['L2'] = summary['average_view']
@@ -303,7 +306,8 @@ def produce_single_report(video_id):
                        ws['B' + str(index)] = b[1]
                        index = index + 1
 
-                   workbook.save(spreadsheet_name)
+                   #workbook.save(spreadsheet_name)
+                   save_workbook(workbook,spreadsheet_name)
                    #return render_template('error.html',error_message='Good!')
 
                    return send_file(os.path.abspath('.') + '\\' + spreadsheet_name, as_attachment=True,
@@ -412,7 +416,7 @@ def produce_single_report(video_id):
         header['report_name'] = temp[1: dash]
 
         spreadsheet_name = header['report_name'] + '_' + str(results[0].SPeriod) + '_' + str(
-            results[0].SYear) + '.xlsx'
+            results[0].SYear) + '.xlsm'
 
 
         #
@@ -469,8 +473,8 @@ def produce_single_report(video_id):
 
         try:
             warnings.simplefilter("ignore")
-            workbook = load_workbook('spreadsheets/Single_Video_Data_Table.xlsx')
-            ws = workbook.get_sheet_by_name("Sheet1")
+            workbook = load_workbook('spreadsheets/TEMPLATE_Non-Channel_online.xlsm',keep_vba=True)
+            ws = workbook.get_sheet_by_name("Source")
             warnings.simplefilter("default")
 
             ws['A2'] = 'MASTERCLASS'
@@ -480,8 +484,8 @@ def produce_single_report(video_id):
             ws['E2'] = summary['video_duration']
             #ws['G2'] = header['company_name']  # participants
             ws['G2'] = caption  # participants
-            ws['H2'] = url  # thumbnail image
-            ws['I2'] = url_video
+            ws['H2'] = url_video  # thumbnail image
+            ws['I2'] = url
             ws['J2'] = summary['total_views']
             ws['K2'] = summary['total_viewing_duration']
             ws['L2'] = summary['average_view']
@@ -566,6 +570,7 @@ def  adjust_results(barchart_ticks, barchart_data,results):
 
 
     return
+
 @app.route('/search/channel_report', methods=['GET','POST'])
 def channel_report_search():
     form = CompanyByNameForm()
@@ -583,32 +588,129 @@ def channel_report_search():
 #       channel reports - type 1
 # ------------------------------------------
 
-@app.route('/channel_report/1/<company_name>',methods=['POST'])
-def channel_report_1(company_name):
+@app.route('/channel_report/1/<int:company_tag_id>')
+def channel_report_1(company_tag_id):
+
+
+    # get current month stats from database
+    current_month_stats = Current_Month_Stats.query.all()
+
+    # unable to retrieve the current reportng month/year, show error page
+    if not current_month_stats:
+        return render_template('error.html',
+                               error_message='Unable to retrieve the current reportng month/year, check database')
+
+    current_month = current_month_stats[0].month_name # March, April .....
+    current_year =  current_month_stats[0].month_year # 2015, 2016 .....
+    current_month_number  = current_month_stats[0].month_number # 1 = Jan, 3 = Mar......
+    current_month_id = current_month_stats[0].month_id # 14,15,16 primary key for Month_Reports table
 
     #
     # get the viewing stats for the channel reports
     #
 
-    viewing_stats = db.session.query(Channel_Reports).filter_by(T_TAG=company_name).all()
+    viewing_stats = db.session.query(Channel_Reports)\
+        .filter_by(TL_TID=company_tag_id, SYear = current_year).all()
+
+
     if not viewing_stats:
         return render_template('error.html',
                         error_message='No data for the current reporting period, check database')
 
-    #
-    # compute totals and averages
-    #
-    total_views = 0
-    total_hours = 0
-    #average_time_minutes  = 0
+    page1 = db.session.query(Channel_Reports_Page1).filter_by(T_ID=company_tag_id).all()
+    company_name = page1[0].T_TAG
 
-    for vs in viewing_stats:
-        total_views = total_views + vs.Total_Views
-        total_hours = total_hours + vs.Total_Hours
-        #total_viewing_duration = total_viewing_duration
-        #average_time_minutes = total_hours * 60 / total_views
 
-    return make_response('<h1>channel_report_1  ' + company_name + ' /' + str(total_views) + '</h1>')
+    spreadsheet_name = 'Channel Report' + '_' + company_name + '_' + \
+                       current_month + '_' + str (current_year) + '.xlsx'
+
+    try:
+        warnings.simplefilter("ignore")
+        workbook = load_workbook('spreadsheets/Channel.xlsx')
+        ws = workbook.get_sheet_by_name("Sheet1")
+        warnings.simplefilter("default")
+
+        ws['A2'] = 'CHANNEL'
+        ws['B2'] = str(current_month_number) + '/1/' + str(current_year)
+        ws['C2'] = company_name
+        ws['D2'] = page1[0].Sum_Total_Views
+        ws['E2'] = page1[0].Sum_Total_Hours
+        ws['F2'] =  page1[0].Sum_Total_Hours * 60 / page1[0].Sum_Total_Views
+        ws['H2'] = "Hey, I forgot the formula!"
+
+
+        # get the top 2 videos
+        top_videos = db.session.query(Channel_Reports.c.V_Title,func.sum(Channel_Reports.c.Total_Hours).label("total_hours"),
+                            func.sum(Channel_Reports.c.Total_Views).label("total_views")
+                            ).filter(Channel_Reports.c.TL_TID==company_tag_id, Channel_Reports.c.SYear==current_year).\
+                            group_by(Channel_Reports.c.V_Title). \
+                            order_by(desc('total_views')).all()
+
+        if top_videos[0]:
+            #Most Watched Title
+            ws['I2'] = top_videos[0].V_Title
+            ws['J2'] = top_videos[0].total_views
+            ws['K2'] = top_videos[0].total_hours
+
+        if top_videos[1]:
+            #Second Most Watched
+            ws['L2'] = top_videos[1].V_Title
+            ws['M2'] = top_videos[1].total_views
+            ws['N2'] = top_videos[1].total_hours
+
+        # get the top viewing month
+        top_month = db.session.query(Channel_Reports.c.SPeriod,Channel_Reports.c.SYear,
+                                      func.sum(Channel_Reports.c.Total_Hours).label("total_hours"),
+                                      func.sum(Channel_Reports.c.Total_Views).label("total_views")
+                                      ).filter(Channel_Reports.c.TL_TID == company_tag_id,
+                                               Channel_Reports.c.SYear == current_year). \
+            group_by(Channel_Reports.c.SPeriod,Channel_Reports.c.SYear). \
+            order_by(desc('total_views')).all()
+
+        if top_month:
+            ws['O2'] = top_month[0].SPeriod + ' ' + str(top_month[0].SYear)
+            ws['Q2'] = top_month[0].total_views
+            ws['R2'] = top_month[0].total_hours
+
+        # get previous month
+        last_month  = db.session.query(Channel_Reports_Last_Month).filter_by(T_ID =company_tag_id ).all()
+        print last_month
+        if last_month:
+            ws['S2'] = last_month[0].Sum_Total_Views
+            ws['T2'] = last_month[0].Sum_Total_Hours
+            ws['U2'] = last_month[0].Sum_Total_Hours * 60 / last_month[0].Sum_Total_Views
+
+        #ytd summary
+        # get the top 2 videos
+        ytd_summary = db.session.query(month_table.c.month,Channel_Reports.c.SPeriod,
+                            func.sum(Channel_Reports.c.Total_Hours).label("total_hours"),
+                            func.sum(Channel_Reports.c.Total_Views).label("total_views")
+                            ).filter(Channel_Reports.c.TL_TID==company_tag_id, Channel_Reports.c.SYear==current_year)\
+                            .join(Channel_Reports, month_table.c.month_name == Channel_Reports.c.SPeriod) \
+                            .group_by(Channel_Reports.c.SPeriod,month_table.c.month). \
+                            order_by('month').all()
+
+        row_pointer = 5
+        for row in ytd_summary:
+            ws['A' +str(row_pointer)] = row.SPeriod
+            ws['C' +str(row_pointer)] = row.total_views
+            ws['D' +str(row_pointer)] = row.total_hours
+            ws['E' + str(row_pointer)] = row.total_hours * 60 / row.total_views
+            row_pointer = row_pointer + 1
+
+        workbook.save(spreadsheet_name)
+
+        return send_file(os.path.abspath('.') + '\\' + spreadsheet_name, as_attachment=True,
+                         attachment_filename=spreadsheet_name)
+
+
+    except Exception as e:
+        print str(e)
+        return render_template('error.html',
+                               error_message='Unable to complete spreadsheet')
+
+
+
 
 @app.route('/graph', methods=['GET'])
 def graph():
