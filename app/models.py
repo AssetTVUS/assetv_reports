@@ -225,7 +225,116 @@ Channel_Reports_Last_Month = db.Table('VW_CHANNEL_REPORTS_LAST_MONTH',db.metadat
                         db.Column('T_ID', db.Integer),
                         db.Column('T_TAG', db.Integer),
                         db.Column('Sum_Total_Views', db.Integer),
-                        db.Column('Sum_Total_Hours',db.Float)
+                        db.Column('Sum_Total_Hours',db.Float),
+                        db.Column('Wirehouse_Advisors', db.Float),
+                        db.Column('Independent_BD', db.Float),
+                        db.Column('RIA', db.Float),
+                        db.Column('Insurance_CPAs_BankTrust', db.Float),
+                        db.Column('Investment_Consultant', db.Float),
+                        db.Column('Endowment_Foundation', db.Float),
+                        db.Column('Plan_Sponsor', db.Float),
+                        db.Column('Asset_Manager', db.Float),
+                        db.Column('PrivateBank_WM', db.Float),
+                        db.Column('IFA',db.Float),
+                        db.Column('Other', db.Float)
+)
+
+CHANNEL_YTD_Audience_Category  = db.Table('VW_CHANNEL_YTD_Audience_Category',db.metadata,
+                        db.Column('T_ID',db.Integer),
+                        db.Column('Wirehouse_Advisors',db.Float),
+                        db.Column('Independent_BD',db.Float),
+                        db.Column('RIA',db.Float),
+                        db.Column('Insurance_CPAs_BankTrust',db.Float),
+                        db.Column('Investment_Consultant',db.Float),
+                        db.Column('Endowment_Foundation',db.Float),
+                        db.Column('Plan_Sponsor',db.Float),
+                        db.Column('Asset_Manager',db.Float),
+                        db.Column('PrivateBank_WM',db.Float),
+                        db.Column('IFA', db.Float),
+                        db.Column('Other',db.Float)
+)
+CHANNEL_YTD_Reports = db.Table('VW_YTD_CHANNEL_REPORTS', db.metadata,
+                                         db.Column('T_ID', db.Integer),
+                                         db.Column('T_TAG', db.Integer),
+                                         db.Column('V_ID',db.Integer),
+                                         db.Column('V_DatePublished', db.Date),
+                                         db.Column('V_Title',db.String(200)),
+                                         db.Column('V_Duration',db.Float),
+                                         db.Column('YTD_Views',db.Integer),
+                                         db.Column('YTD_Avg_Min', db.Float),
+                                         db.Column('YTD_Total_Hours',db.Float),
+                                         db.Column('YTD_Completed_Views',db.Integer),
+                                         db.Column('YTD_Wirehouse_Advisors', db.Float),
+                                         db.Column('YTD_Independent_BD', db.Float),
+                                         db.Column('YTD_Insurance_CPAs_BankTrust', db.Float),
+                                         db.Column('YTD_RIA', db.Float),
+                                         db.Column('YTD_Investment_Consultant', db.Float),
+                                         db.Column('YTD_Plan_Sponsor', db.Float),
+                                         db.Column('YTD_Endowment_Foundation', db.Float),
+                                         db.Column('YTD_Asset_Manager', db.Float),
+                                         db.Column('YTD_Other', db.Float),
+                                         db.Column('YTD_PrivateBank_WM', db.Float),
+                                         db.Column('YTD_IFA', db.Float)
+)
+Last_Month = db.Table('VW_LAST_REPORT_MONTH',db.metadata,
+                        db.Column('month_id',db.Integer),
+                        db.Column('month_short_name',db.String(20)),
+                        db.Column('month_name',db.String(20)),
+                        db.Column('month_number',db.Integer),
+                        db.Column('month_year', db.Integer)
+)
+
+Channel_last_month_Detail = db.Table('VW_CHANNEL_REPORTS_LAST_MONTH_DETAIL',db.metadata,
+                        db.Column('month_id',db.Integer),
+                        db.Column('T_ID', db.Integer),
+                        db.Column('T_Tag',db.String(200)),
+                        db.Column('V_Title',db.String(200)),
+                        db.Column('V_DatePublished', db.Date),
+                        db.Column('V_Duration', db.Float),
+                        db.Column('Total_Views',db.Integer),
+                        db.Column('Total_Hours',db.Integer),
+                        db.Column('Wirehouse_Advisors',db.Float),
+                        db.Column('Independent_BD',db.Float),
+                        db.Column('RIA', db.Float),
+                        db.Column('Insurance_CPAs_BankTrust',db.Float),
+                        db.Column('Investment_Consultant', db.Float),
+                        db.Column('Endowment_Foundation', db.Float),
+                        db.Column('Plan_Sponsor', db.Float),
+                        db.Column('Asset_Manager', db.Float),
+                        db.Column('PrivateBank_WM', db.Float),
+                        db.Column('IFA', db.Float),
+                        db.Column('Other', db.Float)
+
+
+)
+
+channel_report_all_time_2 = db.Table('VW_CHANNEL_REPORTS_ALL_TIME_2',db.metadata,
+                        db.Column('T_ID',db.Integer),
+                        db.Column('T_Tag',db.String(200)),
+                        db.Column('V_DatePublished',db.Date),
+                        db.Column('V_Title',db.String(200)),
+                        db.Column('V_Duration',db.Float),
+                        db.Column('Total_Views', db.Integer),
+                        db.Column('Average_Minutes',db.Float),
+                        db.Column('Total_Hours', db.Float),
+                        db.Column('Engagement', db.Float)
+
+)
+
+channel_email_stats = db.Table('VW_Channel_EMail_Stats',db.metadata,
+                        db.Column('ECID',db.Integer),
+                        db.Column('ETitle',db.String(200)),
+                        db.Column('EDate',db.Date),
+                        db.Column('ESends',db.Integer),
+                        db.Column('EOpens',db.Integer),
+                        db.Column('ECTR',db.Integer),
+                        db.Column('EWirehouseAdvisors',db.Float),
+                        db.Column('EIndepentBD',db.Float),
+                        db.Column('ERIA',db.Float),
+                        db.Column('EInvestmentConsultant',db.Float),
+                        db.Column('EPlanSponsor',db.Float),
+                        db.Column('EAssetManager',db.Float),
+                        db.Column('EOther',db.Float)
 )
 
 class VideoStats(db.Model):
