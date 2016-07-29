@@ -6,17 +6,10 @@
         <div id="page-content-wrapper">
             <div class="container-fluid">
 
-    <div class="row">
-        <div class="col-sm-8 col-sm-4">
-           {{ wtf.quick_form(form) }}
-        </div>
-    </div>
-
-
 
   {% if results %}
 
-  <h2>Videos</h2>
+  <h2>Single Videos</h2>
   <div class="table-responsive">
      <table class="table table-hover table-striped" data-url="/reports/single_report/" id="table_data">
        <thead>
@@ -41,7 +34,6 @@
     </tbody>
   </table>
   <form method="post" action='' id="edit">
-         {{ form.hidden_tag() }}
 
   </form>
 {%endif%}

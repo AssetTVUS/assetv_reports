@@ -6,12 +6,6 @@
         <div id="page-content-wrapper">
             <div class="container-fluid">
 
-    <div class="row">
-        <div class="col-sm-8 col-sm-4">
-           {{ wtf.quick_form(form) }}
-        </div>
-    </div>
-
 
 
   {% if results %}
@@ -43,7 +37,7 @@
     </tbody>
   </table>
   <form method="post" action='' id="edit">
-    {{ form.hidden_tag() }}
+
 
   </form>
 {%endif%}

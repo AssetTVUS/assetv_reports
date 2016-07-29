@@ -116,6 +116,9 @@ class CurrentMonth(db.Model):
     month_number = db.Column(db.Integer)
     month_year = db.Column(db.Integer)
 
+    def __repr__(self):
+        return '<Month (%r) - %r>' % (self.month_number, self.month_year)
+
 class ReportMonth(db.Model):
     __tablename__='report_month'
     __table_args__ = (
@@ -337,6 +340,7 @@ channel_email_stats = db.Table('VW_Channel_EMail_Stats',db.metadata,
                         db.Column('EOther',db.Float)
 )
 
+
 class VideoStats(db.Model):
     __tablename__ = 'VideoStats'
     VS_ID = db.Column(db.Integer, primary_key = True)
@@ -382,6 +386,54 @@ class AudienceProfile(db.Model):
     APIFA  = db.Column(db.Float)
     APOther  = db.Column(db.Float)
     APArea  = db.Column(db.Integer)
+
+class Blog(db.Model):
+    BID = db.Column(db.Integer, primary_key = True)
+    BCID = db.Column(db.Integer)
+    BTitle = db.Column(db.String(200))
+    BDatePublished = db.Column(db.Date)
+
+class BlogStats(db.Model):
+    BSID = db.Column(db.Integer, primary_key = True)
+    BBID =  db.Column(db.Integer)
+    BMonth = db.Column(db.Integer)
+    BViews = db.Column(db.Integer)
+
+class Email(db.Model):
+    EID = db.Column(db.Integer, primary_key = True)
+    ECID = db.Column(db.Integer)
+    ETitle = db.Column(db.String(200))
+    EDate = db.Column(db.Date)
+
+class EmailStats(db.Model):
+    ESID = db.Column(db.Integer, primary_key = True)
+    EEID = db.Column(db.Integer)
+    EMonth = db.Column(db.Integer)
+    ESends = db.Column(db.Integer)
+    EOpens = db.Column(db.Integer)
+    ECTR = db.Column(db.Integer)
+    EWirehouseAdvisors = db.Column(db.Float)
+    EIndepentBD = db.Column(db.Float)
+    ERIA  = db.Column(db.Float)
+    EInsuranceCPAsBankTrust  = db.Column(db.Float)
+    EInvestmentConsultant  = db.Column(db.Float)
+    EEndowmentFoundation  = db.Column(db.Float)
+    EPlanSponsor  = db.Column(db.Float)
+    EAssetManager  = db.Column(db.Float)
+    EOther  = db.Column(db.Float)
+    EArea = db.Column(db.String(10))
+
+class Whitepaper(db.Model):
+    WID = db.Column(db.Integer, primary_key=True)
+    WCID = db.Column(db.Integer)
+    WTitle = db.Column(db.String(200))
+    WDatePublished = db.Column(db.Date)
+
+class WhitepaperStats(db.Model):
+    WSID = db.Column(db.Integer, primary_key = True)
+    WWID = db.Column(db.Integer)
+    WMonth = db.Column(db.Integer)
+    WViews  = db.Column(db.Integer)
 
 class TopCompany_Table(db.Model):
     __tablename__ = 'TopCompany'

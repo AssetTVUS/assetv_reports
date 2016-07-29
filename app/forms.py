@@ -1,6 +1,6 @@
 from flask_wtf import Form
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms import IntegerField, DateField, DecimalField
+from wtforms import IntegerField, DateField, DecimalField,SelectField,HiddenField
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo, DataRequired
 from wtforms.validators import URL, NumberRange
 from wtforms import ValidationError
@@ -46,3 +46,12 @@ class CompanyByNameForm(Form):
     #CName = StringField('Company Name', [DataRequired, Length(min=2,max=100)])
     #CType = StringField('Company Type', [Length(min=2,max=10)])
     submit = SubmitField('Search')
+
+class CurrentMonthForm(Form):
+    month_key = HiddenField()
+    month_number = SelectField ('Months',coerce=int,choices =[(1,'JAN'),(2,'FEB'),(3,'MAR'),(4,'APR'),(5,'MAY'),
+                                       (6,'JUN'),(7,'JUL'),(8,'AUG'),(9,'SEP'),(10,'OCT'),
+                                       (11,'NOV'),(12,'DEC')])
+    month_year = SelectField('Years',coerce=int,choices=[(2015,'2015'),(2016,'2016'),(2017,'2017'),(2018,'2018'),(2019,'2019')])
+    submit = SubmitField("Update")
+
