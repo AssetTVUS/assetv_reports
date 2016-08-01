@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
-from models import Video_Tag, TopCompany, CurrentMonth,VideoTopCompany
+from models import Video_Tag, TopCompanyView, CurrentMonth,VideoTopCompany
 from models import Masterclass_Top_Companies, Month_Report, Channel_Reports, Tag,TagList
 from models import Channel_Reports_Page1,Channel_Reports_Last_Month, month_table
 from models import CHANNEL_YTD_Audience_Category,Last_Month,CHANNEL_YTD_Reports,Channel_last_month_Detail,channel_report_all_time_2
@@ -211,8 +211,8 @@ def produce_single_report(video_id):
                #
 
                top_companies =[]
-               top_companies_result = TopCompany.query.filter_by(VTCVID = video_id).\
-                   order_by(desc(TopCompany.VTCViews)).all()
+               top_companies_result = TopCompanyView.query.filter_by(VTCVID = video_id).\
+                   order_by(desc(TopCompanyView.VTCViews)).all()
 
                for index in  range(len(top_companies_result)):
                    if index == 10:

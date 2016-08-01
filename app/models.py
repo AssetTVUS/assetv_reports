@@ -123,9 +123,19 @@ class CurrentMonth(db.Model):
     def __repr__(self):
         return '<Month (%r) - %r>' % (self.month_number, self.month_year)
 
-
-
 class TopCompany(db.Model):
+    __tablename__= 'TopCompany'
+    TCID = db.Column(db.Integer, primary_key=True)
+    TCCID = db.Column(db.Integer)
+    TCPeriod = db.Column(db.String(255))
+    TCYear = db.Column(db.Integer)
+    TCCompany = db.Column(db.String(255))
+    TCViews = db.Column(db.Integer)
+    TCMonth = db.Column(db.Integer)
+    TCArea = db.Column(db.Integer)
+
+
+class TopCompanyView(db.Model):
     __tablename__ = 'VW_TOP_COMPANIES'
     VTCID = db.Column(db.Integer, primary_key = True)
     VTCVID = db.Column(db.Integer)
@@ -444,17 +454,7 @@ class WhitepaperStats(db.Model):
     WViews  = db.Column(db.Integer)
     whitepaper =  db.relationship(Whitepaper,backref='whitepapers')
 
-class TopCompany_Table(db.Model):
-    __tablename__ = 'TopCompany'
-    TCID = db.Column(db.Integer, primary_key = True)
-    TCCID = db.Column(db.Integer)
-    TCCID  = db.Column(db.Integer)
-    TCPeriod = db.Column(db.String(255))
-    TCYear  = db.Column(db.Integer)
-    TCCompany= db.Column(db.String(255))
-    TCViews  = db.Column(db.Integer)
-    TCMonth  = db.Column(db.Integer)
-    TCArea  = db.Column(db.Integer)
+
 
 
 '''
