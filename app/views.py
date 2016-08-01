@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from app import app
 from app import db
 from models import Video, Company, Company_List, Single_Report_View, Current_Month_Stats
-from models import Video_Tag, TopCompany, ReportMonth, CurrentMonth,VideoTopCompany
+from models import Video_Tag, TopCompany, CurrentMonth,VideoTopCompany
 from models import Masterclass_Top_Companies, Month_Report, Channel_Reports, Tag,TagList
 from models import Channel_Reports_Page1,Channel_Reports_Last_Month, month_table
 from models import CHANNEL_YTD_Audience_Category,Last_Month,CHANNEL_YTD_Reports,Channel_last_month_Detail,channel_report_all_time_2
@@ -20,6 +20,14 @@ from forms import  VideoEditForm , CompanyByNameForm, VideoByNameForm, CurrentMo
 @app.route('/index')
 def index():
     return render_template('index.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 @app.route('/show_report_month', methods=['GET', 'POST'])
 def report_month():

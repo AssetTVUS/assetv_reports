@@ -3,3 +3,4 @@ venv/*
 *.zip
 *.whl
 .idea/*
+create_db.py
