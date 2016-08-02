@@ -11,7 +11,6 @@ class Video(db.Model):
     V_VideoLink = db.Column(db.String(500))
     V_Type = db.Column(db.String(1))
     V_ImageURL = db.Column(db.String(500))
-    #videos = db.relationship("TagList", backref="video")
 
     def __repr__(self):
         return '<Video (%r) - %r>' % (self.V_ID,self.V_Title.encode('utf-8'))
@@ -54,6 +53,8 @@ class Company(db.Model):
 
     def __repr__(self):
         return '<Company (%r) - %r>' % (self.CID, self.CName)
+    def __str__(self):
+        return self.CName
 
 class Company_List(db.Model):
     __tablename__ = "VW_COMPANY_LIST"
@@ -132,9 +133,6 @@ class CurrentMonth(db.Model):
     def __repr__(self):
         return '<Month (%r) - %r>' % (self.month_number, self.month_year)
 
-
-
-
 class TopCompanyView(db.Model):
     __tablename__ = 'VW_TOP_COMPANIES'
     VTCID = db.Column(db.Integer, primary_key = True)
@@ -146,12 +144,6 @@ class TopCompanyView(db.Model):
 class VideoTopCompany(db.Model):
     __tablename__ = 'VideoTopCompany'
 
-    #__table_args__ = (
-    #    db.ForeignKeyConstraint(
-    #        ['VTCPeriod', 'VTCYear'],
-    #        ['Month_report.month_name', 'Month_report.month_year'],
-    #    ),
-    #)
     VTCID = db.Column(db.Integer, primary_key = True)
     VTCVID = db.Column(db.Integer,db.ForeignKey('Video.V_ID'))
     VTCPeriod = db.Column(db.String(255))
@@ -165,9 +157,7 @@ class VideoTopCompany(db.Model):
         backref="videos"
     )
     month = db.relationship(Month_Report, backref='months_vtc')
-    #report_month = db.relationship('ReportMonth', lazy='joined',
-    #                                primaryjoin='report_month.month_name==VideoTopCompany.VTCPeriod')
-    #report_year =  db.relationship('ReportMonth', lazy='joined', primaryjoin='report_month.month_year==VideoTopCompany.VTCYear')
+
 
 
 
@@ -352,6 +342,7 @@ class company_view(db.Model):
     def __str__(self):
         return self.company_name
 
+
 class VideoStats(db.Model):
     __tablename__ = 'VideoStats'
     VS_ID = db.Column(db.Integer, primary_key = True)
@@ -403,10 +394,12 @@ class AudienceProfile(db.Model):
 class Blog(db.Model):
     __tablename__ =  'blog'
     BID = db.Column(db.Integer, primary_key = True)
-    BCID = db.Column(db.Integer,db.ForeignKey(company_view.company_id))
+    #BCID = db.Column(db.Integer,db.ForeignKey(company_view.company_id))    #TODO
+    BCID = db.Column(db.Integer, db.ForeignKey(Company.CID))
     BTitle = db.Column(db.String(200))
     BDatePublished = db.Column(db.Date)
-    companies = db.relationship("company_view", order_by="company_view.company_name")
+    #companies = db.relationship("company_view", order_by="company_view.company_name")  #TODO using Company Table
+    companies = db.relationship("Company",order_by="Company.CName")  #TODO using Company Table
     def __str__(self):
         return self.BTitle
 
@@ -424,9 +417,10 @@ class BlogStats(db.Model):
 class Email(db.Model):
     __tablename__ = 'email'
     EID = db.Column(db.Integer, primary_key = True)
-    ECID = db.Column(db.Integer)
+    ECID = db.Column(db.Integer, db.ForeignKey(Company.CID))
     ETitle = db.Column(db.String(200))
     EDate = db.Column(db.Date)
+    companies = db.relationship("Company", order_by="Company.CName")  # TODO using Company Table
     def __str__(self):
         return self.ETitle
 
@@ -454,21 +448,23 @@ class EmailStats(db.Model):
 class TopCompany(db.Model):
     __tablename__= 'TopCompany'
     TCID = db.Column(db.Integer, primary_key=True)
-    TCCID = db.Column(db.Integer)
+    TCCID = db.Column(db.Integer, db.ForeignKey(Company.CID))
     TCPeriod = db.Column(db.String(255))
     TCYear = db.Column(db.Integer)
     TCCompany = db.Column(db.String(255))
     TCViews = db.Column(db.Integer)
     TCMonth = db.Column(db.Integer,db.ForeignKey(Month_Report.month_id))
     TCArea = db.Column(db.Integer)
-    months = db.relationship(Month_Report, backref='months_tc')
+    month_tc = db.relationship(Month_Report, backref='month_tc')
+    company = db.relationship("Company", order_by="Company.CName")  # TODO using Company Table
 
 class Whitepaper(db.Model):
     __tablename__ = 'whitepaper'
     WID = db.Column(db.Integer, primary_key=True)
-    WCID = db.Column(db.Integer)
+    WCID = db.Column(db.Integer, db.ForeignKey(Company.CID))
     WTitle = db.Column(db.String(200))
     WDatePublished = db.Column(db.Date)
+    company = db.relationship("Company", order_by="Company.CName")  # TODO using Company Table
     def __str__(self):
         return self.WTitle
 
@@ -479,8 +475,8 @@ class WhitepaperStats(db.Model):
     #WMonth = db.Column(db.Integer)
     WMonth = db.Column(db.Integer, db.ForeignKey(Month_Report.month_id))
     WViews  = db.Column(db.Integer)
-    whitepaper =  db.relationship(Whitepaper,backref='whitepapers')
-
+    whitepapers =  db.relationship(Whitepaper,backref='whitepapers')
+    whitepaper_month = db.relationship(Month_Report, backref='whitepaper_month')
 
 
 
