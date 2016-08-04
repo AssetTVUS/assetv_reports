@@ -44,6 +44,7 @@ class Month_Report(db.Model):
     def __str__(self):
         return self.month_name + ' '  + str(self.month_year)
 
+
 class Company(db.Model):
     CID = db.Column(db.Integer, primary_key=True)
     CName = db.Column(db.String(100))
@@ -51,8 +52,9 @@ class Company(db.Model):
     CReportSinceYear  = db.Column(db.Integer)             #TODO
     CType = db.Column(db.Integer)                     #TODO
 
+
     def __repr__(self):
-        return '<Company (%r) - %r>' % (self.CID, self.CName)
+        return '<Company (%r) - %r, %r>' % (self.CID, self.CName, self.company_type_obj)
     def __str__(self):
         return self.CName
 
@@ -369,7 +371,7 @@ class VideoStats(db.Model):
     Finished  = db.Column(db.Integer)
     VSMonth  = db.Column(db.Integer,db.ForeignKey(Month_Report.month_id))
     VSArea  = db.Column(db.Integer)
-    vs_video = db.relationship("Video", backref='vs_video')
+    vs_video = db.relationship("Video", backref='vs_video',lazy='joined')
     vs_months = db.relationship("Month_Report", backref='vs_months')
 
 class AudienceProfile(db.Model):

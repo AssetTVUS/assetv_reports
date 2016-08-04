@@ -492,8 +492,13 @@ def produce_single_report(video_id):
 @app.route('/search/channel_report', methods=['GET','POST'])
 def channel_report_search():
 
-    results = Video.query.filter(Video.V_Type == 'CHANNEL') \
-        .order_by(Video.V_Title).all()
+    #results = Video.query.filter(Video.V_Type == 'CHANNEL') \
+    #   .order_by(Video.V_Title).all()
+    #results = Company.query.filter(Company.company_type_obj.company_type == 'CHANNEL') \
+    #          .order_by(Company.CName).all()
+    results = Company_List.query.filter(Company_List.company_type == 'CHANNEL').all()
+    for x in results:
+        print repr(x)
     return render_template('channel_report_results.html',results=results)
 
 
