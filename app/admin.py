@@ -11,10 +11,10 @@ from flask_admin.contrib.sqla.ajax import QueryAjaxModelLoader
 from flask_admin import menu
 
 
-from models import Video,VideoTopCompany,Blog,BlogStats
+from models import Video,VideoTopCompany,Blog,BlogStats,Company
 from models import AudienceProfile, Email, EmailStats
 from models import TopCompany, Whitepaper, WhitepaperStats,company_view
-from models import AudienceProfile,VideoStats
+from models import AudienceProfile,VideoStats, Month_Report
 from flask_admin.model import typefmt
 from datetime import date
 from wtforms.validators import InputRequired,NumberRange,URL,DataRequired,ValidationError,StopValidation
@@ -126,22 +126,23 @@ class TopCompanyModelView(ModelView):
     form_args = dict(
 
         month_tc = dict(validators=[InputRequired(message='Please select a month'),
-                                       DataRequired(message='Pleasea select a month')]),
+                                    DataRequired(message='Pleasea select a month')]),
         TCViews = dict(validators=[InputRequired(message='Please provide the number of Views'),
-                                      NumberRange(min=0, max=999999, message='Please enter a valid duration')]),
+                                   NumberRange(min=0, max=999999, message='Please enter a valid duration')]),
         TCArea =  dict(validators=[InputRequired(message='Please provide the number of Views'),
-                                      NumberRange(min=0, max=5, message='Please enter a valid area')]),
+                                   NumberRange(min=0, max=5, message='Please enter a valid area')]),
         TCCompany = dict(validators=[InputRequired(message='Please select a company'),
-                                       DataRequired(message='Pleasea select a company')]),
+                                     DataRequired(message='Pleasea select a company')]),
         company = dict(validators=[InputRequired(message='Please Select a Company'),
-                               DataRequired(message='Please Select a Company')])
+                                   DataRequired(message='Please Select a Company')])
     )
 
 class VideoStatsModelView(ModelView):
     column_filters = ['vs_months']
     column_searchable_list = ['vs_video.V_Title']
     column_default_sort = 'vs_video.V_Title'
-    column_sortable_list  = ('V_ID',('vs_video', 'vs_video.V_Title'))
+    column_sortable_list  = ('V_ID', ('vs_video', 'vs_video.V_Title'))
+    '''
     column_exclude_list = ['SPeriod', 'SYear']
     form_excluded_columns = ['SPeriod', 'SYear']
     form_widget_args = {
@@ -149,31 +150,36 @@ class VideoStatsModelView(ModelView):
             'disabled': True
         }
     }
+    '''
+
     column_labels = dict(WirehouseAdvisors='Wirehouse Advisors',
-                     Independent_BD='Independent BD',
-                     RIA='RIA',
-                     Insurance_CPAs_BankTrust='Insurance CPAs BankTrust',
-                     Investment_Consultant='Investment Consultant',
-                     Endowment_Foundation='Endowment Foundation',
-                     Plan_Sponsor='Plan Sponsor',
-                     Asset_Manager='Asset Manager',
-                     PrivateBank_WM='PrivateBank WM',
-                     IFA='IFA',
-                     Other='Other',
-                     vs_months='Month',
-                     VSArea ='Area',
-                     Total_Views='Total Views',
-                     Avgerage_Minutes = 'Average Minutes',
-                     Total_Hours = 'Total Hours',
-                     Completed_Views = 'Completed Views',
-                     Terminal_Views = 'Terminal Views',
-                     vs_video = 'Video Title',
-                     VType = 'Type'
+                         Independent_BD='Independent BD',
+                         RIA='RIA',
+                         Insurance_CPAs_BankTrust='Insurance CPAs BankTrust',
+                         Investment_Consultant='Investment Consultant',
+                         Endowment_Foundation='Endowment Foundation',
+                         Plan_Sponsor='Plan Sponsor',
+                         Asset_Manager='Asset Manager',
+                         PrivateBank_WM='PrivateBank WM',
+                         IFA='IFA',
+                         Other='Other',
+                         vs_months='Month',
+                         VSArea ='Area',
+                         Total_Views='Total Views',
+                         Avgerage_Minutes = 'Average Minutes',
+                         Total_Hours = 'Total Hours',
+                         Completed_Views = 'Completed Views',
+                         Terminal_Views = 'Terminal Views',
+                         vs_video = 'Video Title',
+                         VType = 'Type'
 
                      )
-    column_choices = { 'VType' :[('Interactive','Interactive'),('INHOTSEAT','INHOTSEAT'),('MASTERCLASS','MASTERCLASS'),
-                                 ('SINGLE','SINGLE'),('',' ')]
+
+    '''
+    column_choices = {'VType' :[('Interactive', 'Interactive'),('INHOTSEAT', 'INHOTSEAT'), ('MASTERCLASS','MASTERCLASS'),
+                                 ('SINGLE', 'SINGLE'), ('', ' ')]
     }
+    '''
 
     legit_number = dict(validators=[ NumberRange(min=0, max=999999, message='Please enter a valid number')])
     form_args = dict(
@@ -238,43 +244,108 @@ class VideoStatsModelView(ModelView):
         if  form.Other.data:
             total = total +  form.Other.data
 
-
         print '=======> ' + str(total) + ' <======='
         if (total == 0) | (total == 1):
             pass
-            #super(form, model, is_created)._on_model_change()
+            # super(form, model, is_created)._on_model_change()
         else:
             raise ValidationError(message='Invalid: These should add up to 1.0')
 
 
 class AudienceProfileModelView(ModelView):
-    column_searchable_list = ['APCID']
-    column_labels = dict(APWirehouseAdvisors = 'Wirehouse Advisors',
-                         APindependent_BD='Independent BD', APRIA='RIA',
-                         APInsurance_CPAs_BankTrust = 'Insurance CPAs BankTrust',
-                         APInvestmentConsultant = 'Investment Consultant',
-                         APEndowment_Foundation = 'Endowment Foundation',
-                         APPlanSponsor = 'Plan Sponsor',
-                         APAssetManager = 'Asset Manager',
-                         APPrivateBank_WM = 'PrivateBank WM',
-                         APIFA = 'IFA',
-                         APOther ='APOther',
-                         APArea = 'APArea'
+    column_default_sort = 'company.CName'
+    column_searchable_list = ['company.CName']
+    column_labels = dict(APCID='Company',
+                         APMonth='Month',
+                         APWirehouseAdvisors='Wirehouse Advisors',
+                         APindependent_BD='Independent BD',
+                         APRIA='RIA',
+                         APInsurance_CPAs_BankTrust='Insurance CPAs BankTrust',
+                         APInvestmentConsultant='Investment Consultant',
+                         APEndowment_Foundation='Endowment Foundation',
+                         APPlanSponsor='Plan Sponsor',
+                         APAssetManager='Asset Manager',
+                         APPrivateBank_WM='PrivateBank WM',
+                         APIFA='IFA',
+                         APOther='Other',
+                         APArea='Area'
                          )
-    '''
-    vstats = VideoStatsModelView(VideoStats,db.session)
-    column_labels = vstats.column_labels
-    legit_number = vstats.legit_number
-    form_args = vstats.form_args
-    form_excluded_columns = vstats.form_excluded_columns
-    column_exclude_list = vstats.column_exclude_list
 
-    def on_model_change(self,form,model):
-        vstats.on_model_change(sef,form,model)
-    '''
+    legit_number = dict(validators=[NumberRange(min=0, max=999999, message='Please enter a valid number')])
+    form_args = dict(
+
+        Total_Views=legit_number,
+        Avgerage_Minutes=legit_number,
+        Total_Hours=legit_number,
+        Completed_Views=legit_number,
+        Terminal_Views=legit_number,
+        Wirehouse_Advisors=legit_number,
+        Independent_BD=legit_number,
+        RIA=legit_number,
+        Insurance_CPAs_BankTrust=legit_number,
+        Investment_Consultant=legit_number,
+        Endowment_Foundation=legit_number,
+        Plan_Sponsor=legit_number,
+        Asset_Manager=legit_number,
+        PrivateBank_WM=legit_number,
+        IFA=legit_number,
+        Other=legit_number,
+        Finished=legit_number,
+        VSArea=legit_number
+
+    )
+    form_args['month'] = dict(validators=[InputRequired(message='Please select a month'),
+                                          DataRequired(message='Pleasea select a month')])
+    form_args['company'] = dict(validators=[InputRequired(message='Please select a Company'),
+                                          DataRequired(message='Pleasea select a Company')])
+
+    def on_model_change(self, form, model):
+        total = 0
+
+        if form.APWirehouseAdvisors.data:
+            total = total + form.APWirehouseAdvisors.data
+
+        if form.APindependent_BD.data:
+            total = total + form.APindependent_BD.data
+
+        if form.APRIA.data:
+            total = total + form.APRIA.data
+
+        if form.APInsurance_CPAs_BankTrust.data:
+            total = total + form.APInsurance_CPAs_BankTrust.data
+
+        if form.APInvestmentConsultant.data:
+            total = total + form.APInvestmentConsultant.data
+
+        if form.APEndowment_Foundation.data:
+            total = total + form.APEndowment_Foundation.data
+
+        if form.APPlanSponsor.data:
+            total = total + form.APPlanSponsor.data
+
+        if form.APAssetManager.data:
+            total = total + form.APAssetManager.data
+
+        if form.APPrivateBank_WM.data:
+            total = total + form.APPrivateBank_WM.data
+
+        if form.APIFA.data:
+            total = total + form.APIFA.data
+
+        if form.APOther.data:
+            total = total + form.APOther.data
+
+        print '=======> ' + str(total) + ' <======='
+        if (total == 0) | (total == 1):
+            pass
+            # super(form, model, is_created)._on_model_change()
+        else:
+           raise ValidationError(message='Invalid: These should add up to 1.0')
+
 
 class VideoTopCompanyModelView(ModelView):
     column_filters = ['VTCCompany','video.V_Title']
+    column_default_sort = 'VTCCompany','video.V_Title'
     form_excluded_columns = ['VTCYear','VTCPeriod']
     column_searchable_list = ['video.V_Title']
     column_exclude_list = ['VTCPeriod', 'VTCYear']
@@ -347,17 +418,17 @@ class WhitepaperStatsModelView(ModelView):
 
 real_home = menu.MenuLink(name='Back to Application',url='/')
 admin.add_link(real_home)
-admin.add_view(AudienceProfileModelView(AudienceProfile,db.session))
-admin.add_view(BlogModelView(Blog,db.session))
-admin.add_view(BlogStatsModelView(BlogStats,db.session))
-admin.add_view(EmailModelView(Email,db.session))
-admin.add_view(EmailStatsModelView(EmailStats,db.session))
-admin.add_view(TopCompanyModelView(TopCompany, db.session))
-admin.add_view(VideoModelView(Video, db.session))
-admin.add_view(VideoStatsModelView(VideoStats,db.session))
-admin.add_view(VideoTopCompanyModelView(VideoTopCompany, db.session))
-admin.add_view(WhitepaperModelView(Whitepaper, db.session))
-admin.add_view(WhitepaperStatsModelView(WhitepaperStats, db.session))
+admin.add_view(AudienceProfileModelView(AudienceProfile,db.session, category='Company'))
+admin.add_view(BlogModelView(Blog,db.session, category='Company'))
+admin.add_view(BlogStatsModelView(BlogStats,db.session, category='Company'))
+admin.add_view(EmailModelView(Email,db.session, category='Company'))
+admin.add_view(EmailStatsModelView(EmailStats,db.session, category='Company'))
+admin.add_view(TopCompanyModelView(TopCompany, db.session, category='Company'))
+admin.add_view(VideoModelView(Video, db.session, category='Video'))
+admin.add_view(VideoStatsModelView(VideoStats,db.session, category='Video'))
+admin.add_view(VideoTopCompanyModelView(VideoTopCompany, db.session, category='Video'))
+admin.add_view(WhitepaperModelView(Whitepaper, db.session, category='Company'))
+admin.add_view(WhitepaperStatsModelView(WhitepaperStats, db.session, category='Company'))
 
 
 
