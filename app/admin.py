@@ -17,7 +17,7 @@ from models import TopCompany, Whitepaper, WhitepaperStats,company_view
 from models import AudienceProfile,VideoStats
 from flask_admin.model import typefmt
 from datetime import date
-from wtforms.validators import InputRequired,NumberRange,URL,DataRequired,ValidationError
+from wtforms.validators import InputRequired,NumberRange,URL,DataRequired,ValidationError,StopValidation
 
 admin = Admin(app, name='Dashboard', template_mode='bootstrap3')
 
@@ -36,20 +36,6 @@ MY_DEFAULT_FORMATTERS.update({
     })
 
 
-class AudienceProfileModelView(ModelView):
-    column_searchable_list = ['APCID']
-    column_labels = dict(APWirehouseAdvisors = 'Wirehouse Advisors',
-                         APindependent_BD='Independent BD', APRIA='RIA',
-                         APInsurance_CPAs_BankTrust = 'Insurance CPAs BankTrust',
-                         APInvestmentConsultant = 'Investment Consultant',
-                         APEndowment_Foundation = 'Endowment Foundation',
-                         APPlanSponsor = 'Plan Sponsor',
-                         APAssetManager = 'Asset Manager',
-                         APPrivateBank_WM = 'PrivateBank WM',
-                         APIFA = 'IFA',
-                         APOther ='APOther',
-                         APArea = 'APArea'
-                         )
 
 class BlogModelView(ModelView):
     column_searchable_list = ['BTitle']
@@ -70,8 +56,7 @@ class BlogModelView(ModelView):
     form_excluded_columns = ['blogs']
 
 
-    def on_model_change(form, model, is_created):
-        pass
+
 class BlogStatsModelView(ModelView):
     column_default_sort = 'blog.BTitle'
     column_searchable_list = ['blog.BTitle']
@@ -218,7 +203,6 @@ class VideoStatsModelView(ModelView):
                                        DataRequired(message='Pleasea select a month')])
 
     def on_model_change(self, form, model):
-        print form
         total = 0
 
         if  form.Wirehouse_Advisors.data :
@@ -260,9 +244,34 @@ class VideoStatsModelView(ModelView):
             pass
             #super(form, model, is_created)._on_model_change()
         else:
-            print '=======> ' + str(total) + ' <======='
-            #raise ValidationError('Invalid: These should add up to 1.0')
-            return
+            raise ValidationError(message='Invalid: These should add up to 1.0')
+
+
+class AudienceProfileModelView(ModelView):
+    column_searchable_list = ['APCID']
+    column_labels = dict(APWirehouseAdvisors = 'Wirehouse Advisors',
+                         APindependent_BD='Independent BD', APRIA='RIA',
+                         APInsurance_CPAs_BankTrust = 'Insurance CPAs BankTrust',
+                         APInvestmentConsultant = 'Investment Consultant',
+                         APEndowment_Foundation = 'Endowment Foundation',
+                         APPlanSponsor = 'Plan Sponsor',
+                         APAssetManager = 'Asset Manager',
+                         APPrivateBank_WM = 'PrivateBank WM',
+                         APIFA = 'IFA',
+                         APOther ='APOther',
+                         APArea = 'APArea'
+                         )
+    '''
+    vstats = VideoStatsModelView(VideoStats,db.session)
+    column_labels = vstats.column_labels
+    legit_number = vstats.legit_number
+    form_args = vstats.form_args
+    form_excluded_columns = vstats.form_excluded_columns
+    column_exclude_list = vstats.column_exclude_list
+
+    def on_model_change(self,form,model):
+        vstats.on_model_change(sef,form,model)
+    '''
 
 class VideoTopCompanyModelView(ModelView):
     column_filters = ['VTCCompany','video.V_Title']
@@ -338,7 +347,7 @@ class WhitepaperStatsModelView(ModelView):
 
 real_home = menu.MenuLink(name='Back to Application',url='/')
 admin.add_link(real_home)
-##admin.add_view(AudienceProfileModelView(AudienceProfile,db.session))   #TODO broke because of Company Table
+admin.add_view(AudienceProfileModelView(AudienceProfile,db.session))
 admin.add_view(BlogModelView(Blog,db.session))
 admin.add_view(BlogStatsModelView(BlogStats,db.session))
 admin.add_view(EmailModelView(Email,db.session))
